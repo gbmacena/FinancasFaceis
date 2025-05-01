@@ -49,3 +49,14 @@ export const updateExpenseSchema = z.object({
     categoryId: z.number().int("Category ID must be an integer").optional(),
   }),
 });
+
+export const dashboardSchema = z.object({
+  query: z.object({
+    month: z
+      .string()
+      .regex(/^\d{4}-(0[1-9]|1[0-2])$/, "Invalid month format (expected YYYY-MM)")
+      .optional(),
+    category: z.string().optional(),
+    title: z.string().optional(),
+  }),
+});

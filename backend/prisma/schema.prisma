@@ -33,16 +33,16 @@ model Entries {
 }
 
 enum CategoryType {
-  ALIMENTACAO
-  TRANSPORTE
-  ENTRETENIMENTO
-  OUTROS
-  SAUDE
-  EDUCACAO
-  COMPRAS
-  VIAGEM
-  INVESTIMENTOS
-  DIVIDAS
+  Alimentação
+  Transporte
+  Entretenimento
+  Outros
+  Saúde
+  Educação
+  Compras
+  Viagem
+  Investimentos
+  Dívidas
 }
 
 model Expense {

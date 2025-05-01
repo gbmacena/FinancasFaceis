@@ -110,6 +110,25 @@ const userController = {
       });
     }
   },
+  getDashboard: async (req: Request, res: Response) => {
+    try {
+      const { userId } = req.params;
+      const { month, category, title } = req.query;
+
+      const dashboardData = await userService.getDashboard(userId, {
+        month: month as string,
+        category: category as string,
+        title: title as string,
+      });
+
+      res.status(200).json(dashboardData);
+    } catch (error) {
+      const customError = error as typeError;
+      res.status(customError.statusCode || 500).json({
+        message: customError.message || "Error fetching dashboard data",
+      });
+    }
+  },
 };
 
 export default userController;

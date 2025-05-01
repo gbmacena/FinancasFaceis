@@ -7,6 +7,7 @@ import {
   createEntrySchema,
   createExpenseSchema,
   updateExpenseSchema,
+  dashboardSchema,
 } from "../schemas/userSchema";
 
 const router = Router();
@@ -17,12 +18,11 @@ router.post("/:userId/entries", validate(createEntrySchema), userController.crea
 router.post("/:userId/expenses", validate(createExpenseSchema), userController.createExpense);
 router.put("/expenses/:expenseId", validate(updateExpenseSchema), userController.updateExpense);
 router.delete("/expenses/:expenseId", userController.deleteExpense);
+router.get("/:userId/dashboard", validate(dashboardSchema), userController.getDashboard);
 
-// router.get("/:userId/expenses", validate(userUuidSchema), userController.listExpenses);
 // router.post("/:userId/expenses/installments", userController.createInstallment);
 // router.post("/:userId/recurring-expenses", userController.createRecurringExpense);
 
-// router.get("/:userId/dashboard", userController.getDashboard);
 // router.get("/:userId/dashboard/comparison", userController.getDashboardComparison);
 
 export default router;
