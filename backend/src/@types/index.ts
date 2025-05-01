@@ -15,3 +15,7 @@ export enum CategoryType {
   GIFTS = "GIFTS",
   SUBSCRIPTIONS = "SUBSCRIPTIONS",
 }
+
+export interface CustomError extends Error {
+  statusCode?: number;
+}

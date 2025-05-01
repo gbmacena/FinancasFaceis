@@ -27,6 +27,7 @@ async function main() {
     Array.from({ length: 5 }).map((_, i) =>
       prisma.user.create({
         data: {
+          name: faker.person.fullName(),
           email: `user${i + 1}@example.com`,
           passwordHash: "$2a$10$dXJ3SW6G7P50lGmMkkmwe.20cQQubK3.HZWzG3YB1tlRy.fqvM/BG", // "password" hashed
         },
