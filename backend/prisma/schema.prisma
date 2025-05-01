@@ -1,9 +1,104 @@
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+
+model User {
+  id               Int       @id @default(autoincrement())
+  uuid             String    @default(uuid())
+  email            String    @unique
+  passwordHash     String
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  income           Entries[]
+  expenses         Expense[]
+  recurringExpenses RecurringExpense[]
+}
+
+model Entries {
+  id        Int       @id @default(autoincrement())
+  uuid      String    @default(uuid())
+  value     Float
+  date      DateTime
+  userId    Int
+  user      User      @relation(fields: [userId], references: [id])
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+enum CategoryType {
+  FOOD
+  TRANSPORT
+  ENTERTAINMENT
+  OTHER
+  HEALTH
+  EDUCATION
+  UTILITIES
+  SHOPPING
+  TRAVEL
+  SAVINGS
+  INVESTMENTS
+  DEBTS
+  INCOME
+  GIFTS
+  SUBSCRIPTIONS
+}
+
+model Expense {
+  id              Int               @id @default(autoincrement())
+  uuid            String            @default(uuid())
+  title           String
+  value           Float
+  date            DateTime
+  categoryId      Int?
+  userId          Int
+  user            User              @relation(fields: [userId], references: [id])
+  category        Category?         @relation(fields: [categoryId], references: [id])
+  recurringExpenseId Int?           
+  recurringExpense RecurringExpense? @relation(fields: [recurringExpenseId], references: [id])
+  installments    Installment[]     
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+}
+model Category {
+  id        Int       @id @default(autoincrement())
+  uuid      String    @default(uuid())
+  name      String    @unique
+  expenses  Expense[]
+  recurringExpenses RecurringExpense[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Installment {
+  id                Int       @id @default(autoincrement())
+  uuid              String    @default(uuid())
+  expenseId         Int
+  totalInstallments Int       
+  value             Float     
+  expense           Expense   @relation(fields: [expenseId], references: [id])
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+}
+
+model RecurringExpense {
+  id          Int       @id @default(autoincrement())
+  uuid        String    @default(uuid())
+  userId      Int
+  title       String
+  value       Float
+  categoryId  Int?
+  nextDueDate DateTime   
+  frequency   String    
+  endDate     DateTime?  
+  user        User       @relation(fields: [userId], references: [id])
+  category    Category?  @relation(fields: [categoryId], references: [id])
+  expenses    Expense[]  
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
 }
