@@ -21,7 +21,7 @@ export const createEntrySchema = z.object({
     userId: z.string().uuid("Invalid user UUID format"),
   }),
   body: z.object({
-    amount: z.number(),
-    description: z.string(),
+    value: z.number().positive("Value must be a positive number"),
+    date: z.string().refine((date) => !isNaN(Date.parse(date)), "Invalid date format"),
   }),
 });
