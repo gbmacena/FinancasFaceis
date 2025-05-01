@@ -19,3 +19,8 @@ export enum CategoryType {
 export interface typeError extends Error {
   statusCode?: number;
 }
+
+export interface UpdateUserData {
+  name?: string;
+  email?: string;
+}
