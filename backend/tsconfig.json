@@ -1,8 +1,13 @@
 {
   "compilerOptions": {
-    "lib": ["ES2022"],
-    "module": "node16",
-    "target": "ES2022"
+    "baseUrl": ".", // Define a raiz do projeto
+    "paths": {
+      "@types/*": ["src/@types/*"] // Alias para a pasta @types
+    },
+    "esModuleInterop": true, // Garante compatibilidade com CommonJS
+    "skipLibCheck": true, // Ignora verificações de tipos em bibliotecas
+    "resolveJsonModule": true // Permite importar JSON
   },
-  "include": ["**/*"]
+  "include": ["src/**/*", "prisma/**/*"], // Inclui os arquivos do projeto
+  "exclude": ["node_modules"]
 }
