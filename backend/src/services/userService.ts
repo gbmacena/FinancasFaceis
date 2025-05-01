@@ -75,6 +75,44 @@ const userService = {
       throw createError("Internal error while creating entry", 500);
     }
   },
+  createExpense: async (
+    userId: string,
+    expenseData: { title: string; value: number; date: string; categoryId?: number }
+  ) => {
+    try {
+      const user = await prisma.user.findUnique({ where: { uuid: userId } });
+
+      if (!user) {
+        throw createError("User not found", 404);
+      }
+
+      const categoriaExists = await prisma.category.findUnique({
+        where: { id: expenseData.categoryId || 0 },
+      });
+
+      if (expenseData.categoryId && !categoriaExists) {
+        throw createError("Category not exists", 404);
+      }
+
+      const expense = await prisma.expense.create({
+        data: {
+          title: expenseData.title,
+          value: expenseData.value,
+          date: new Date(expenseData.date),
+          userId: user.id,
+          categoryId: expenseData.categoryId || null,
+        },
+      });
+
+      return expense;
+    } catch (error) {
+      const customError = error as typeError;
+      if (customError.statusCode) {
+        throw customError;
+      }
+      throw createError("Internal error while creating expense", 500);
+    }
+  },
 };
 
 // listExpenses: async (userId: string, query: any) => {

@@ -33,21 +33,16 @@ model Entries {
 }
 
 enum CategoryType {
-  FOOD
-  TRANSPORT
-  ENTERTAINMENT
-  OTHER
-  HEALTH
-  EDUCATION
-  UTILITIES
-  SHOPPING
-  TRAVEL
-  SAVINGS
-  INVESTMENTS
-  DEBTS
-  INCOME
-  GIFTS
-  SUBSCRIPTIONS
+  ALIMENTACAO
+  TRANSPORTE
+  ENTRETENIMENTO
+  OUTROS
+  SAUDE
+  EDUCACAO
+  COMPRAS
+  VIAGEM
+  INVESTIMENTOS
+  DIVIDAS
 }
 
 model Expense {
@@ -69,7 +64,7 @@ model Expense {
 model Category {
   id        Int       @id @default(autoincrement())
   uuid      String    @default(uuid())
-  name      String    @unique
+  name      CategoryType   @unique
   expenses  Expense[]
   recurringExpenses RecurringExpense[]
   createdAt DateTime  @default(now())

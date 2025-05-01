@@ -54,19 +54,23 @@ const userController = {
       });
     }
   },
+  createExpense: async (req: Request, res: Response) => {
+    try {
+      const { userId } = req.params;
+      const { title, value, date, categoryId } = req.body;
 
-  // listExpenses: async (req: Request, res: Response) => {
-  //   try {
-  //     const { userId } = req.params;
-  //     const expenses = await userService.listExpenses(userId, req.query);
-  //     res.json(expenses);
-  //   } catch (error) {
-  //     const customError = error as typeError;
-  //     res.status(customError.statusCode || 500).json({
-  //       message: customError.message || "Error fetching expenses",
-  //     });
-  //   }
-  // },
+      await userService.createExpense(userId, { title, value, date, categoryId });
+
+      res.status(201).json({
+        message: "Expense created successfully",
+      });
+    } catch (error) {
+      const customError = error as typeError;
+      res.status(customError.statusCode || 500).json({
+        message: customError.message || "Error creating expense",
+      });
+    }
+  },
 };
 
 export default userController;
