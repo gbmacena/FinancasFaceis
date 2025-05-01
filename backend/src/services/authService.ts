@@ -14,11 +14,11 @@ const register = async (name: string, email: string, password: string) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = await prisma.user.create({
+    await prisma.user.create({
       data: { name, email, passwordHash: hashedPassword },
     });
 
-    return user;
+    return { message: "User registered successfully" };
   } catch (error) {
     const customError = error as typeError;
     if (customError.statusCode) {
