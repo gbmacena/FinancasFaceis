@@ -20,9 +20,4 @@ router.put("/expenses/:expenseId", validate(updateExpenseSchema), userController
 router.delete("/expenses/:expenseId", userController.deleteExpense);
 router.get("/:userId/dashboard", validate(dashboardSchema), userController.getDashboard);
 
-// router.post("/:userId/expenses/installments", userController.createInstallment);
-// router.post("/:userId/recurring-expenses", userController.createRecurringExpense);
-
-// router.get("/:userId/dashboard/comparison", userController.getDashboardComparison);
-
 export default router;

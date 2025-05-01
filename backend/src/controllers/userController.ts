@@ -54,12 +54,12 @@ const userController = {
       });
     }
   },
-  createExpense: async (req: Request, res: Response) => {
+  createExpense: async (req: Request, res: Response): Promise<void> => {
     try {
       const { userId } = req.params;
-      const { title, value, date, categoryId } = req.body;
+      const { title, value, date, categoryId, installments, isRecurring, endDate } = req.body;
 
-      await userService.createExpense(userId, { title, value, date, categoryId });
+      await userService.createExpense(userId, { title, value, date, categoryId, installments, isRecurring, endDate });
 
       res.status(201).json({
         message: "Expense created successfully",

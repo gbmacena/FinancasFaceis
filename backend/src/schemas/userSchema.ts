@@ -34,7 +34,14 @@ export const createExpenseSchema = z.object({
     title: z.string().min(1, "Title is required"),
     value: z.number().positive("Value must be a positive number"),
     date: z.string().refine((date) => !isNaN(Date.parse(date)), "Invalid date format"),
-    categoryId: z.number().int("Category ID must be an integer").optional(),
+    categoryId: z.number().int("Category ID must be an integer"),
+    installments: z.number().int("Installments must be an integer").min(1).optional(),
+    endDate: z
+      .string()
+      .refine((date) => !isNaN(Date.parse(date)), "Invalid date format")
+      .optional(),
+    isRecurring: z.boolean().optional(),
+    recurrenceInterval: z.literal("monthly").optional(),
   }),
 });
 

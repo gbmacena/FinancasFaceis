@@ -78,42 +78,321 @@ const userService = {
   },
   createExpense: async (
     userId: string,
-    expenseData: { title: string; value: number; date: string; categoryId?: number }
+    expenseData: {
+      title: string;
+      value: number;
+      date: string;
+      categoryId?: number;
+      installments?: number;
+      isRecurring?: boolean;
+      endDate?: string;
+    }
   ) => {
-    try {
-      const user = await prisma.user.findUnique({ where: { uuid: userId } });
+    const user = await prisma.user.findUnique({ where: { uuid: userId } });
+    if (!user) throw createError("User not found", 404);
 
-      if (!user) {
-        throw createError("User not found", 404);
+    if (expenseData.categoryId) {
+      const categoryExists = await prisma.category.findUnique({ where: { id: expenseData.categoryId } });
+      if (!categoryExists) throw createError("Category not exists", 404);
+    }
+
+    // Caso seja uma despesa recorrente
+    if (expenseData.isRecurring) {
+      if (!expenseData.endDate) {
+        throw createError("End date is required for recurring expenses", 400);
       }
 
-      const categoriaExists = await prisma.category.findUnique({
-        where: { id: expenseData.categoryId || 0 },
-      });
+      const startDate = new Date(expenseData.date);
+      const endDate = new Date(expenseData.endDate);
 
-      if (expenseData.categoryId && !categoriaExists) {
-        throw createError("Category not exists", 404);
+      if (startDate > endDate) {
+        throw createError("Start date cannot be after end date", 400);
       }
 
-      const expense = await prisma.expense.create({
+      // Criar o registro principal na tabela RecurringExpense
+      const recurringExpense = await prisma.recurringExpense.create({
         data: {
+          userId: user.id,
           title: expenseData.title,
           value: expenseData.value,
-          date: new Date(expenseData.date),
-          userId: user.id,
           categoryId: expenseData.categoryId || null,
+          nextDueDate: startDate,
+          endDate: endDate,
+          frequency: "monthly",
         },
       });
 
-      return expense;
-    } catch (error) {
-      const customError = error as typeError;
-      if (customError.statusCode) {
-        throw customError;
+      // Gerar as despesas associadas na tabela Expense
+      const recurringExpenses = [];
+      const startDay = startDate.getUTCDate();
+      const startMonth = startDate.getUTCMonth();
+      const startYear = startDate.getUTCFullYear();
+
+      let currentMonth = startMonth;
+      let currentYear = startYear;
+
+      while (true) {
+        const lastDayOfMonth = new Date(Date.UTC(currentYear, currentMonth + 1, 0)).getUTCDate();
+        const day = Math.min(startDay, lastDayOfMonth);
+
+        const currentDate = new Date(Date.UTC(currentYear, currentMonth, day));
+
+        if (currentDate > endDate) break;
+
+        recurringExpenses.push({
+          title: expenseData.title,
+          value: expenseData.value,
+          date: currentDate,
+          userId: user.id,
+          categoryId: expenseData.categoryId || null,
+          recurringExpenseId: recurringExpense.id, // Associar à despesa recorrente
+        });
+
+        currentMonth += 1;
+        if (currentMonth > 11) {
+          currentMonth = 0;
+          currentYear += 1;
+        }
       }
-      throw createError("Internal error while creating expense", 500);
+
+      // Criar as despesas associadas na tabela Expense
+      await prisma.expense.createMany({
+        data: recurringExpenses,
+      });
+
+      // Retorna para evitar criar uma despesa adicional
+      return;
     }
+
+    // Caso seja uma despesa parcelada
+    if (expenseData.installments && expenseData.installments > 1) {
+      const total = expenseData.installments;
+      const installmentValue = expenseData.value / total;
+      const installments: Array<{
+        title: string;
+        value: number;
+        date: Date;
+        userId: number;
+        categoryId: number | null;
+      }> = [];
+
+      const initial = new Date(expenseData.date);
+      const startDay = initial.getUTCDate();
+      const startMonth = initial.getUTCMonth();
+      const startYear = initial.getUTCFullYear();
+
+      for (let i = 0; i < total; i++) {
+        const linearMonth = startMonth + i;
+        const year = startYear + Math.floor(linearMonth / 12);
+        const month = linearMonth % 12;
+
+        const lastDayOfMonth = new Date(Date.UTC(year, month + 1, 0)).getUTCDate();
+        const day = Math.min(startDay, lastDayOfMonth);
+
+        const date = new Date(Date.UTC(year, month, day));
+
+        installments.push({
+          title: `${expenseData.title} (Parcela ${i + 1}/${total})`,
+          value: installmentValue,
+          date,
+          userId: user.id,
+          categoryId: expenseData.categoryId ?? null,
+        });
+      }
+
+      const createdExpenses = [];
+      for (const installment of installments) {
+        const expense = await prisma.expense.create({ data: installment });
+        createdExpenses.push(expense);
+      }
+
+      const installmentRecords = createdExpenses.map((expense, index) => ({
+        expenseId: expense.id,
+        value: installments[index].value,
+        date: installments[index].date,
+        title: installments[index].title,
+      }));
+
+      await prisma.installment.createMany({ data: installmentRecords });
+
+      return;
+    }
+
+    // Caso seja uma despesa normal
+    await prisma.expense.create({
+      data: {
+        title: expenseData.title,
+        value: expenseData.value,
+        date: new Date(expenseData.date),
+        userId: user.id,
+        categoryId: expenseData.categoryId || null,
+      },
+    });
   },
+  //   expenseData: {
+  //     title: string;
+  //     value: number;
+  //     date: string;
+  //     categoryId?: number;
+  //     installments: number;
+  //   }
+  // ) => {
+  //   const user = await prisma.user.findUnique({ where: { uuid: userId } });
+  //   if (!user) throw createError("User not found", 404);
+
+  //   if (expenseData.categoryId) {
+  //     const cat = await prisma.category.findUnique({ where: { id: expenseData.categoryId } });
+  //     if (!cat) throw createError("Category not exists", 404);
+  //   }
+
+  //   const total = expenseData.installments;
+  //   const installmentValue = expenseData.value / total;
+  //   const installments: Array<{
+  //     title: string;
+  //     value: number;
+  //     date: Date;
+  //     userId: number;
+  //     categoryId: number | null;
+  //   }> = [];
+
+  //   const initial = new Date(expenseData.date);
+  //   const startDay = initial.getUTCDate();
+  //   const startMonth = initial.getUTCMonth();
+  //   const startYear = initial.getUTCFullYear();
+
+  //   for (let i = 0; i < total; i++) {
+  //     const linearMonth = startMonth + i;
+  //     const year = startYear + Math.floor(linearMonth / 12);
+  //     const month = linearMonth % 12;
+
+  //     const lastDayOfMonth = new Date(Date.UTC(year, month + 1, 0)).getUTCDate();
+  //     const day = Math.min(startDay, lastDayOfMonth);
+
+  //     const date = new Date(Date.UTC(year, month, day));
+
+  //     installments.push({
+  //       title: `${expenseData.title} (Parcela ${i + 1}/${total})`,
+  //       value: installmentValue,
+  //       date,
+  //       userId: user.id,
+  //       categoryId: expenseData.categoryId ?? null,
+  //     });
+  //   }
+
+  //   // Criar as despesas individualmente para obter os IDs
+  //   const createdExpenses = [];
+  //   for (const installment of installments) {
+  //     const expense = await prisma.expense.create({ data: installment });
+  //     createdExpenses.push(expense);
+  //   }
+
+  //   // Criar os registros na tabela Installment
+  //   const installmentRecords = createdExpenses.map((expense, index) => ({
+  //     expenseId: expense.id, // Associar ao ID da despesa criada
+  //     value: installments[index].value,
+  //     date: installments[index].date,
+  //   }));
+
+  //   await prisma.installment.createMany({ data: installmentRecords });
+  // },
+  // createRecurringExpense: async (
+  //   userId: string,
+  //   expenseData: { title: string; value: number; date: string; categoryId?: number; endDate: string }
+  // ) => {
+  //   console.log("Starting createRecurringExpense...");
+  //   console.log("Received data:", expenseData);
+
+  //   const user = await prisma.user.findUnique({ where: { uuid: userId } });
+
+  //   if (!user) {
+  //     console.error("User not found");
+  //     throw createError("User not found", 404);
+  //   }
+
+  //   console.log("User found:", user);
+
+  //   if (expenseData.categoryId) {
+  //     const categoryExists = await prisma.category.findUnique({
+  //       where: { id: expenseData.categoryId },
+  //     });
+
+  //     if (!categoryExists) {
+  //       console.error("Category not exists");
+  //       throw createError("Category not exists", 404);
+  //     }
+
+  //     console.log("Category found:", categoryExists);
+  //   }
+
+  //   const startDate = new Date(expenseData.date);
+  //   const endDate = new Date(expenseData.endDate);
+
+  //   console.log("Start Date:", startDate);
+  //   console.log("End Date:", endDate);
+
+  //   if (startDate > endDate) {
+  //     console.error("Start date is after end date");
+  //     throw createError("Start date cannot be after end date", 400);
+  //   }
+
+  //   // Criar o registro principal na tabela RecurringExpense
+  //   const recurringExpense = await prisma.recurringExpense.create({
+  //     data: {
+  //       userId: user.id,
+  //       title: expenseData.title,
+  //       value: expenseData.value,
+  //       categoryId: expenseData.categoryId || null,
+  //       nextDueDate: startDate,
+  //       endDate: endDate,
+  //       frequency: "monthly", // Ajuste conforme necessário
+  //     },
+  //   });
+
+  //   console.log("RecurringExpense created:", recurringExpense);
+
+  //   const recurringExpenses = [];
+  //   const startDay = startDate.getUTCDate();
+  //   const startMonth = startDate.getUTCMonth();
+  //   const startYear = startDate.getUTCFullYear();
+
+  //   let currentMonth = startMonth;
+  //   let currentYear = startYear;
+
+  //   while (true) {
+  //     const lastDayOfMonth = new Date(Date.UTC(currentYear, currentMonth + 1, 0)).getUTCDate();
+  //     const day = Math.min(startDay, lastDayOfMonth);
+
+  //     const currentDate = new Date(Date.UTC(currentYear, currentMonth, day));
+
+  //     if (currentDate > endDate) break;
+
+  //     console.log("Creating recurring expense for date:", currentDate);
+
+  //     recurringExpenses.push({
+  //       title: expenseData.title,
+  //       value: expenseData.value,
+  //       date: currentDate,
+  //       userId: user.id,
+  //       categoryId: expenseData.categoryId || null,
+  //       recurringExpenseId: recurringExpense.id, // Associar à despesa recorrente
+  //     });
+
+  //     currentMonth += 1;
+  //     if (currentMonth > 11) {
+  //       currentMonth = 0;
+  //       currentYear += 1;
+  //     }
+  //   }
+
+  //   console.log("Final Recurring Expenses Array:", recurringExpenses);
+
+  //   // Criar as despesas associadas na tabela Expense
+  //   await prisma.expense.createMany({
+  //     data: recurringExpenses,
+  //   });
+
+  //   console.log("Recurring expenses successfully created!");
+  // },
   updateExpense: async (
     expenseUuid: string,
     updateData: { title?: string; value?: number; date?: string; categoryId?: number }
@@ -163,6 +442,10 @@ const userService = {
       if (!expense) {
         throw createError("Expense not found", 404);
       }
+
+      await prisma.installment.deleteMany({
+        where: { expenseId: expense.id },
+      });
 
       await prisma.expense.delete({
         where: { uuid: expenseUuid },
