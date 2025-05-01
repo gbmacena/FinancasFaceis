@@ -5,7 +5,6 @@ import { CategoryType } from "../src/@types/index";
 const prisma = new PrismaClient();
 
 async function main() {
-  // Limpar dados existentes
   await prisma.installment.deleteMany();
   await prisma.expense.deleteMany();
   await prisma.recurringExpense.deleteMany();
@@ -13,7 +12,6 @@ async function main() {
   await prisma.category.deleteMany();
   await prisma.user.deleteMany();
 
-  // Criar categorias
   const categoryTypes = Object.values(CategoryType);
   const categories = await Promise.all(
     categoryTypes.map((type) =>
@@ -25,7 +23,6 @@ async function main() {
     )
   );
 
-  // Criar usuários
   const users = await Promise.all(
     Array.from({ length: 5 }).map((_, i) =>
       prisma.user.create({
@@ -38,7 +35,6 @@ async function main() {
   );
 
   for (const user of users) {
-    // Criar entradas de dinheiro
     for (let i = 0; i < 12; i++) {
       await prisma.entries.create({
         data: {
@@ -49,7 +45,6 @@ async function main() {
       });
     }
 
-    // Criar despesas
     for (let i = 0; i < 20; i++) {
       const expenseDate = faker.date.between({
         from: "2023-01-01",
@@ -58,7 +53,6 @@ async function main() {
       const category = faker.helpers.arrayElement(categories);
 
       if (Math.random() < 0.3) {
-        // Criar despesas parceladas
         const totalInstallments = faker.helpers.arrayElement([3, 6, 10, 12]);
         const expense = await prisma.expense.create({
           data: {
@@ -80,7 +74,6 @@ async function main() {
           });
         }
       } else {
-        // Criar despesas únicas
         await prisma.expense.create({
           data: {
             title: faker.commerce.productName(),
@@ -93,7 +86,6 @@ async function main() {
       }
     }
 
-    // Criar despesas recorrentes
     const frequencies = ["MONTHLY", "WEEKLY", "BIWEEKLY", "QUARTERLY"];
     for (let i = 0; i < 5; i++) {
       const category = faker.helpers.arrayElement(categories);
