@@ -50,30 +50,32 @@ const userService = {
       throw createError("Internal error while updating user data", 500);
     }
   },
+  createEntry: async (userId: string, data: { value: number; date: string }) => {
+    try {
+      const user = await prisma.user.findUnique({ where: { uuid: userId } });
+
+      if (!user) {
+        throw createError("User not found", 404);
+      }
+
+      await prisma.entries.create({
+        data: {
+          value: data.value,
+          date: new Date(data.date),
+          userId: user.id,
+        },
+      });
+
+      return { message: "Entry created successfully" };
+    } catch (error) {
+      const customError = error as typeError;
+      if (customError.statusCode) {
+        throw customError;
+      }
+      throw createError("Internal error while creating entry", 500);
+    }
+  },
 };
-
-// createEntry: async (userId: string, data: any) => {
-//   try {
-//     const user = await prisma.user.findUnique({ where: { uuid: userId } });
-//     if (!user) {
-//       throw createError("User not found", 404);
-//     }
-
-//     const entry = await prisma.entries.create({
-//       data: {
-//         ...data,
-//         userId: user.id, // Relaciona o ID interno do usuário
-//       },
-//     });
-//     return entry;
-//   } catch (error) {
-//     const customError = error as typeError;
-//     if (customError.statusCode) {
-//       throw customError;
-//     }
-//     throw createError("Internal error while creating entry", 500);
-//   }
-// },
 
 // listExpenses: async (userId: string, query: any) => {
 //   try {

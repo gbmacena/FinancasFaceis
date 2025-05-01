@@ -1,14 +1,14 @@
 import { Router } from "express";
 import userController from "../controllers/userController";
 import { validate } from "../middlewares/validate.middleware";
-import { userUuidSchema, updateUserSchema } from "../schemas/userSchema";
+import { userUuidSchema, updateUserSchema, createEntrySchema } from "../schemas/userSchema";
 
 const router = Router();
 
 router.get("/:userId", validate(userUuidSchema), userController.getUser);
 router.put("/:userId", validate(updateUserSchema), userController.updateUser);
+router.post("/:userId/entries", validate(createEntrySchema), userController.createEntry);
 
-// router.post("/:userId/entries", validate(createEntrySchema), userController.createEntry);
 // router.get("/:userId/expenses", validate(userUuidSchema), userController.listExpenses);
 
 // router.post("/:userId/expenses", userController.createExpense);

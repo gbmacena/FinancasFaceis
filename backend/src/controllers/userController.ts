@@ -39,18 +39,21 @@ const userController = {
     }
   },
 
-  // createEntry: async (req: Request, res: Response) => {
-  //   try {
-  //     const { userId } = req.params;
-  //     const entry = await userService.createEntry(userId, req.body);
-  //     res.status(201).json(entry);
-  //   } catch (error) {
-  //     const customError = error as typeError;
-  //     res.status(customError.statusCode || 500).json({
-  //       message: customError.message || "Error creating entry",
-  //     });
-  //   }
-  // },
+  createEntry: async (req: Request, res: Response) => {
+    try {
+      const { userId } = req.params;
+      const { value, date } = req.body;
+
+      const entry = await userService.createEntry(userId, { value, date });
+
+      res.status(201).json(entry);
+    } catch (error) {
+      const customError = error as typeError;
+      res.status(customError.statusCode || 500).json({
+        message: customError.message || "Error creating entry",
+      });
+    }
+  },
 
   // listExpenses: async (req: Request, res: Response) => {
   //   try {
