@@ -18,9 +18,7 @@ const register = async (name: string, email: string, password: string) => {
       data: { name, email, passwordHash: hashedPassword },
     });
 
-    return {
-      message: "User registered successfully",
-    };
+    return { message: "User registered successfully" };
   } catch (error) {
     const customError = error as typeError;
     if (customError.statusCode) {
