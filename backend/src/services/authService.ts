@@ -1,7 +1,8 @@
 import bcrypt from "bcryptjs";
 import { PrismaClient } from "@prisma/client";
 import { createError } from "../utils/customError";
-import { CustomError } from "./../@types/index";
+import { typeError } from "./../@types/index";
+import { generateToken, generateRefreshToken, verifyToken } from "../utils/jwt.utils";
 
 const prisma = new PrismaClient();
 
@@ -19,7 +20,7 @@ const register = async (name: string, email: string, password: string) => {
 
     return user;
   } catch (error) {
-    const customError = error as CustomError;
+    const customError = error as typeError;
     if (customError.statusCode) {
       throw customError;
     }
@@ -38,10 +39,12 @@ const login = async (email: string, password: string) => {
     if (!isPasswordValid) {
       throw createError("Incorrect password", 401);
     }
+    const accessToken = generateToken({ id: user.id, email: user.email });
+    const refreshToken = generateRefreshToken({ id: user.id, email: user.email });
 
-    return { message: "Login successful" };
+    return { message: "Login successful", accessToken, refreshToken };
   } catch (error) {
-    const customError = error as CustomError;
+    const customError = error as typeError;
     if (customError.statusCode) {
       throw customError;
     }
@@ -49,7 +52,22 @@ const login = async (email: string, password: string) => {
   }
 };
 
+const refresh = async (refreshToken: string) => {
+  try {
+    const payload = verifyToken(refreshToken, "refresh");
+    const accessToken = generateToken(payload as object);
+    return { accessToken };
+  } catch (error) {
+    const customError = error as typeError;
+    if (customError.statusCode) {
+      throw customError;
+    }
+    throw createError("Internal error while refreshing token", 500);
+  }
+};
+
 export default {
   register,
   login,
+  refresh,
 };
