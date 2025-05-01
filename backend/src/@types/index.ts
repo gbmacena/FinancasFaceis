@@ -16,6 +16,11 @@ export enum CategoryType {
   SUBSCRIPTIONS = "SUBSCRIPTIONS",
 }
 
-export interface CustomError extends Error {
+export interface typeError extends Error {
   statusCode?: number;
+}
+
+export interface UpdateUserData {
+  name?: string;
+  email?: string;
 }

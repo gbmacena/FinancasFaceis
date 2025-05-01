@@ -1,7 +1,7 @@
-import { CustomError } from "./../@types/index";
+import { typeError } from "./../@types/index";
 
-export const createError = (message: string, statusCode: number): CustomError => {
-  const error = new Error(message) as CustomError;
+export const createError = (message: string, statusCode: number): typeError => {
+  const error = new Error(message) as typeError;
   error.statusCode = statusCode;
   return error;
 };

@@ -1,13 +1,13 @@
 {
   "compilerOptions": {
-    "baseUrl": ".", // Define a raiz do projeto
+    "baseUrl": ".",
     "paths": {
-      "@types/*": ["src/@types/*"] // Alias para a pasta @types
+      "@types/*": ["src/@types/*"]
     },
-    "esModuleInterop": true, // Garante compatibilidade com CommonJS
-    "skipLibCheck": true, // Ignora verificações de tipos em bibliotecas
-    "resolveJsonModule": true // Permite importar JSON
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true
   },
-  "include": ["src/**/*", "prisma/**/*"], // Inclui os arquivos do projeto
+  "include": ["src/**/*", "prisma/**/*"],
   "exclude": ["node_modules"]
 }
