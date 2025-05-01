@@ -37,3 +37,15 @@ export const createExpenseSchema = z.object({
     categoryId: z.number().int("Category ID must be an integer").optional(),
   }),
 });
+
+export const updateExpenseSchema = z.object({
+  params: z.object({
+    expenseId: z.string().uuid("Invalid expense UUID format"),
+  }),
+  body: z.object({
+    title: z.string().optional(),
+    value: z.number().positive("Value must be a positive number").optional(),
+    date: z.string().refine((date) => !isNaN(Date.parse(date)), "Invalid date format"),
+    categoryId: z.number().int("Category ID must be an integer").optional(),
+  }),
+});

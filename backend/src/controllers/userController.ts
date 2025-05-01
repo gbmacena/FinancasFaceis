@@ -71,6 +71,45 @@ const userController = {
       });
     }
   },
+  updateExpense: async (req: Request, res: Response) => {
+    try {
+      const { expenseId } = req.params;
+      const { title, value, date, categoryId } = req.body;
+
+      const updateData: { title?: string; value?: number; date?: string; categoryId?: number } = {};
+      if (title) updateData.title = title;
+      if (value) updateData.value = value;
+      if (date) updateData.date = date;
+      if (categoryId) updateData.categoryId = categoryId;
+
+      await userService.updateExpense(expenseId, updateData);
+
+      res.status(200).json({
+        message: "Expense updated successfully",
+      });
+    } catch (error) {
+      const customError = error as typeError;
+      res.status(customError.statusCode || 500).json({
+        message: customError.message || "Error updating expense",
+      });
+    }
+  },
+  deleteExpense: async (req: Request, res: Response) => {
+    try {
+      const { expenseId } = req.params;
+
+      await userService.deleteExpense(expenseId);
+
+      res.status(200).json({
+        message: "Expense deleted successfully",
+      });
+    } catch (error) {
+      const customError = error as typeError;
+      res.status(customError.statusCode || 500).json({
+        message: customError.message || "Error deleting expense",
+      });
+    }
+  },
 };
 
 export default userController;

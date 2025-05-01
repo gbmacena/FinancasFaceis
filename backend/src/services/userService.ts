@@ -113,41 +113,69 @@ const userService = {
       throw createError("Internal error while creating expense", 500);
     }
   },
+  updateExpense: async (
+    expenseUuid: string,
+    updateData: { title?: string; value?: number; date?: string; categoryId?: number }
+  ) => {
+    try {
+      const expense = await prisma.expense.findUnique({
+        where: { uuid: expenseUuid },
+      });
+
+      if (!expense) {
+        throw createError("Expense not found", 404);
+      }
+
+      if (updateData.categoryId) {
+        const categoryExists = await prisma.category.findUnique({
+          where: { id: updateData.categoryId },
+        });
+
+        if (!categoryExists) {
+          throw createError("Category not exists", 404);
+        }
+      }
+
+      const updatedExpense = await prisma.expense.update({
+        where: { uuid: expenseUuid },
+        data: {
+          ...updateData,
+          date: updateData.date ? new Date(updateData.date) : undefined,
+        },
+      });
+
+      return updatedExpense;
+    } catch (error) {
+      const customError = error as typeError;
+      if (customError.statusCode) {
+        throw customError;
+      }
+      throw createError("Internal error while updating expense", 500);
+    }
+  },
+  deleteExpense: async (expenseUuid: string) => {
+    try {
+      const expense = await prisma.expense.findUnique({
+        where: { uuid: expenseUuid },
+      });
+
+      if (!expense) {
+        throw createError("Expense not found", 404);
+      }
+
+      await prisma.expense.delete({
+        where: { uuid: expenseUuid },
+      });
+
+      return { message: "Expense deleted successfully" };
+    } catch (error) {
+      const customError = error as typeError;
+      if (customError.statusCode) {
+        throw customError;
+      }
+      throw createError("Internal error while deleting expense", 500);
+    }
+  },
 };
-
-// listExpenses: async (userId: string, query: any) => {
-//   try {
-//     const filters: any = { userId };
-
-//     if (query.month) {
-//       filters.createdAt = {
-//         gte: new Date(`${query.month}-01`),
-//         lt: new Date(`${query.month}-31`),
-//       };
-//     }
-
-//     if (query.title) {
-//       filters.title = { contains: query.title, mode: "insensitive" };
-//     }
-
-//     if (query.category) {
-//       filters.category = query.category;
-//     }
-
-//     const expenses = await prisma.expense.findMany({
-//       where: filters,
-//       skip: query.skip ? parseInt(query.skip) : undefined,
-//       take: query.take ? parseInt(query.take) : undefined,
-//     });
-
-//     return expenses;
-//   } catch (error) {
-//     const customError = error as typeError;
-//     if (customError.statusCode) {
-//       throw customError;
-//     }
-//     throw createError("Internal error while listing expenses", 500);
-//   }
-// },
 
 export default userService;

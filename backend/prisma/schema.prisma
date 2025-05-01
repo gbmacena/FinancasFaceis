@@ -47,7 +47,7 @@ enum CategoryType {
 
 model Expense {
   id              Int               @id @default(autoincrement())
-  uuid            String            @default(uuid())
+  uuid            String            @unique @default(uuid())
   title           String
   value           Float
   date            DateTime
