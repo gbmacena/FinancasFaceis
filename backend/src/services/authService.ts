@@ -42,7 +42,15 @@ const login = async (email: string, password: string) => {
     const accessToken = generateToken({ id: user.id, email: user.email });
     const refreshToken = generateRefreshToken({ id: user.id, email: user.email });
 
-    return { message: "Login successful", accessToken, refreshToken };
+    return {
+      message: "Login successful",
+      user: {
+        uuid: user.uuid,
+        name: user.name,
+      },
+      accessToken,
+      refreshToken,
+    };
   } catch (error) {
     const customError = error as typeError;
     if (customError.statusCode) {
