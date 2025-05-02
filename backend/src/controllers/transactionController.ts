@@ -23,6 +23,7 @@ const transactionController = {
       const { userId } = req.params;
       const { title, value, date, categoryId, installments, isRecurring, endDate } = req.body;
 
+      console.log(date);
       await transactionService.createExpense(userId, {
         title,
         value,

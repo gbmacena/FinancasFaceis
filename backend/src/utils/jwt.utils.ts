@@ -4,7 +4,7 @@ import { createError } from "./customError";
 
 const JWT_SECRET = process.env.JWT_SECRET;
 const REFRESH_SECRET = process.env.REFRESH_SECRET;
-const JWT_EXPIRATION = "1h";
+const JWT_EXPIRATION = "2h";
 const REFRESH_EXPIRATION = "7d";
 
 export const generateToken = (payload: object): string => {

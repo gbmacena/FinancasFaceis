@@ -234,7 +234,22 @@ const transactionService = {
         where: { uuid: expenseUuid },
       });
 
-      return { message: "Expense deleted successfully" };
+      const totalIncome = await prisma.entries.aggregate({
+        where: { userId: expense.userId },
+        _sum: { value: true },
+      });
+
+      const totalExpenses = await prisma.expense.aggregate({
+        where: { userId: expense.userId },
+        _sum: { value: true },
+      });
+
+      const balance = (totalIncome._sum.value || 0) - (totalExpenses._sum.value || 0);
+
+      return {
+        message: "Expense deleted successfully",
+        balance,
+      };
     } catch (error) {
       const customError = error as typeError;
       if (customError.statusCode) {
