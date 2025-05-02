@@ -56,8 +56,6 @@ const userService = {
         );
       }
 
-      console.log("Chamando API com token:", token);
-
       const response = await axios.get(`${API_URL}/users/${userId}/dashboard`, {
         params: filters,
         headers: {
