@@ -1,0 +1,102 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                Int                @id @default(autoincrement())
+  uuid              String             @unique @default(uuid())
+  email             String             @unique
+  passwordHash      String
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  name              String
+  income            Entries[]
+  expenses          Expense[]
+  recurringExpenses RecurringExpense[]
+}
+
+model Entries {
+  id                 Int               @id @default(autoincrement())
+  uuid               String            @default(uuid())
+  value              Float
+  date               DateTime
+  userId             Int
+  recurringExpenseId Int?
+  recurringExpense   RecurringExpense? @relation(fields: [recurringExpenseId], references: [id])
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+  user               User              @relation(fields: [userId], references: [id])
+}
+
+model Expense {
+  id                 Int           @id @default(autoincrement())
+  uuid               String        @unique @default(uuid())
+  title              String
+  value              Float
+  date               DateTime
+  categoryId         Int?
+  userId             Int
+  recurringExpenseId Int?
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+  category           Category?     @relation(fields: [categoryId], references: [id])
+  user               User          @relation(fields: [userId], references: [id])
+  installments       Installment[]
+}
+
+model Category {
+  id                Int                @id @default(autoincrement())
+  uuid              String             @default(uuid())
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  name              CategoryType       @unique
+  expenses          Expense[]
+  recurringExpenses RecurringExpense[]
+}
+
+model Installment {
+  id        Int      @id @default(autoincrement())
+  uuid      String   @default(uuid())
+  title     String
+  expenseId Int
+  value     Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  date      DateTime
+  expense   Expense  @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+}
+
+model RecurringExpense {
+  id          Int       @id @default(autoincrement())
+  uuid        String    @default(uuid())
+  userId      Int
+  title       String
+  value       Float
+  categoryId  Int?
+  nextDueDate DateTime
+  frequency   String
+  endDate     DateTime?
+  entries     Entries[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  category    Category? @relation(fields: [categoryId], references: [id])
+  user        User      @relation(fields: [userId], references: [id])
+}
+
+enum CategoryType {
+  Alimentação
+  Transporte
+  Entretenimento
+  Outros
+  Saúde
+  Educação
+  Compras
+  Viagem
+  Investimentos
+  Dívidas
+}
