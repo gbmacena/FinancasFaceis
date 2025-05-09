@@ -29,22 +29,17 @@ const authService = {
 
   login: async ({ email, password }: LoginParams): Promise<LoginResponse> => {
     try {
-      console.log("Iniciando login para o email:", email);
-
       const user = await prisma.user.findUnique({ where: { email } });
       if (!user) {
-        console.log("Usuário não encontrado:", email);
         throw createError("User not found", 404);
       }
 
       const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
       if (!isPasswordValid) {
-        console.log("Senha inválida para o usuário:", email);
         throw createError("Incorrect password", 401);
       }
 
       const accessToken = generateToken({ id: user.id, email: user.email });
-      console.log("Login bem-sucedido para o usuário:", email);
 
       return {
         message: "Login successful",
