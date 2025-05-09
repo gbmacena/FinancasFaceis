@@ -12,6 +12,7 @@ import userService from "@/services/userService";
 import { setItem } from "@/utils/storage";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import axios from "axios";
 
 const loginSchema = z.object({
   email: z.string().email({ message: "E-mail inválido" }),
@@ -53,14 +54,14 @@ export function LoginForm() {
 
       router.push("/dashboard");
     } catch (err: unknown) {
-      if (err instanceof Error) {
+      if (axios.isAxiosError(err) && err.response?.data?.message) {
         const errorTranslations: Record<string, string> = {
           "Incorrect password": "E-mail ou senha inválidos",
           "User not found": "Email incorreto ou não cadastrado",
         };
 
         const errorMessage =
-          errorTranslations[err.message] ||
+          errorTranslations[err.response.data.message] ||
           "Ocorreu um erro inesperado. Tente novamente.";
 
         toast.error(errorMessage);
