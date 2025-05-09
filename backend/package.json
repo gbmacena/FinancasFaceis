@@ -3,10 +3,14 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "engines": {
+    "node": "18"
+  },
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc",
+    "build": "tsup src/index.ts",
+    "start": "node dist/index.js",
     "seed": "ts-node  prisma/seed.ts"
   },
   "keywords": [],
@@ -24,6 +28,7 @@
     "globals": "^16.0.0",
     "prisma": "^6.7.0",
     "ts-node-dev": "^2.0.0",
+    "tsup": "^8.4.0",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.31.1"
   },
