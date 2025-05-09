@@ -10,7 +10,14 @@ const PORT = process.env.PORT || 3001;
 
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: ["https://financas-faceis.vercel.app"],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  })
+);
+
 app.use(express.json());
 
 app.use("/api/auth", authRouter);
@@ -27,8 +34,8 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: "http://localhost:3001/api",
-        description: "Servidor local",
+        url: "https://financasfaceis.onrender.com/api",
+        description: "Servidor de produção",
       },
     ],
     components: {
