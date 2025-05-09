@@ -9,16 +9,16 @@ export const useCategories = () => {
     const fetchCategories = async () => {
       try {
         const mockCategories: Category[] = [
-          { id: 2, name: "Alimentação" },
-          { id: 3, name: "Transporte" },
-          { id: 4, name: "Entretenimento" },
-          { id: 5, name: "Outros" },
-          { id: 6, name: "Saúde" },
-          { id: 7, name: "Educação" },
-          { id: 8, name: "Compras" },
-          { id: 9, name: "Viagem" },
-          { id: 10, name: "Investimentos" },
-          { id: 11, name: "Dívidas" },
+          { id: 1, name: "Alimentação" },
+          { id: 2, name: "Transporte" },
+          { id: 3, name: "Entretenimento" },
+          { id: 4, name: "Outros" },
+          { id: 5, name: "Saúde" },
+          { id: 6, name: "Educação" },
+          { id: 7, name: "Compras" },
+          { id: 8, name: "Viagem" },
+          { id: 9, name: "Investimentos" },
+          { id: 10, name: "Dívidas" },
         ];
         setCategories(mockCategories);
       } catch {
