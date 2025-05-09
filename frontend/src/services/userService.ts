@@ -7,7 +7,7 @@ const userService = {
     email: string,
     password: string
   ): Promise<{ message: string }> => {
-    const response = await api.post("/auth/register", {
+    const response = await api.post("/api/auth/register", {
       name,
       email,
       password,
@@ -22,7 +22,7 @@ const userService = {
     accessToken: string;
     user: User;
   }> => {
-    const response = await api.post("/auth/login", {
+    const response = await api.post("/api/auth/login", {
       email,
       password,
     });
@@ -36,7 +36,7 @@ const userService = {
     user: User;
     expenses: Expense[];
   }> => {
-    const response = await api.get(`/users/${userId}/dashboard`, {
+    const response = await api.get(`/api/users/${userId}/dashboard`, {
       params: filters,
     });
     return response.data;

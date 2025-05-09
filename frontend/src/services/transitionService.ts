@@ -9,7 +9,7 @@ const transactionService = {
     }
   ): Promise<{ message: string }> => {
     const response = await api.put(
-      `/transactions/expenses/${expenseId}`,
+      `/api/transactions/expenses/${expenseId}`,
       updateData
     );
     return response.data;
@@ -20,14 +20,16 @@ const transactionService = {
     entryData: Pick<Expense, "value" | "date">
   ): Promise<{ message: string }> => {
     const response = await api.post(
-      `/transactions/${userId}/entries`,
+      `/api/transactions/${userId}/entries`,
       entryData
     );
     return response.data;
   },
 
   deleteExpense: async (expenseId: string): Promise<{ message: string }> => {
-    const response = await api.delete(`/transactions/expenses/${expenseId}`);
+    const response = await api.delete(
+      `/api/transactions/expenses/${expenseId}`
+    );
     return response.data;
   },
 
@@ -38,7 +40,7 @@ const transactionService = {
     }
   ): Promise<{ message: string }> => {
     const response = await api.post(
-      `/transactions/${userId}/expenses`,
+      `/api/transactions/${userId}/expenses`,
       expenseData
     );
     return response.data;
