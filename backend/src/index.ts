@@ -12,7 +12,10 @@ const app = express();
 
 app.use(
   cors({
-    origin: ["https://financas-faceis.vercel.app"],
+    origin: [
+      "https://financas-faceis.vercel.app",
+      "https://financas-faceis-581h7q5np-gabriel-macenas-projects-1f1e12d1.vercel.app",
+    ],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
