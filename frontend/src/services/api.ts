@@ -3,7 +3,7 @@ import { toast } from "sonner";
 import { getItem, removeItem } from "@/utils/storage";
 import { useRouter } from "next/navigation";
 
-const API_URL = "http://localhost:3001/api";
+const API_URL = "https://financasfaceis.onrender.com";
 
 const api = axios.create({
   baseURL: API_URL,
