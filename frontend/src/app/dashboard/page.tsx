@@ -125,13 +125,14 @@ export default function DashboardPage() {
             <SelectItem value="2026">2026</SelectItem>
           </SelectContent>
         </Select>
+
         <MonthSelector
           selectedMonth={selectedMonth}
           onSelectMonth={setSelectedMonth}
         />
         <Select
           onValueChange={(value) => {
-            setSelectedCategory(value ? Number(value) : null);
+            setSelectedCategory(value !== "0" ? Number(value) : null);
           }}
           value={selectedCategory !== null ? String(selectedCategory) : "0"}
         >
