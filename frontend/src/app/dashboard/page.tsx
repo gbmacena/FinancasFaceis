@@ -130,6 +130,8 @@ export default function DashboardPage() {
           selectedMonth={selectedMonth}
           onSelectMonth={setSelectedMonth}
         />
+      </div>
+      <div className="mt-4">
         <Select
           onValueChange={(value) => {
             setSelectedCategory(value !== "0" ? Number(value) : null);
