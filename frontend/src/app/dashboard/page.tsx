@@ -329,10 +329,8 @@ export default function DashboardPage() {
 
   if (!dashboardData) {
     return (
-      <main className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4 md:p-6">
-        <div className="max-w-7xl mx-auto">
-          <p className="text-center text-gray-500">Carregando...</p>
-        </div>
+      <main className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500 border-solid"></div>
       </main>
     );
   }
