@@ -52,6 +52,21 @@ export function TransactionDialog({
     }));
   };
 
+  const handleValueChange = (value: string) => {
+    const numericValue = value.replace(/\D/g, "");
+
+    const formattedValue = new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    }).format(Number(numericValue) / 100);
+
+    setTransactionData((prev) => ({
+      ...prev,
+      value: Number(numericValue) / 100,
+      formattedValue,
+    }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -151,7 +166,7 @@ export function TransactionDialog({
                 step="0.01"
                 placeholder="0,00"
                 value={transactionData.value}
-                onChange={(e) => handleChange("value", Number(e.target.value))}
+                onChange={(e) => handleValueChange(e.target.value)}
                 required
               />
             </div>
