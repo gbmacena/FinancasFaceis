@@ -72,6 +72,11 @@ export function TransactionDialog({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (!transactionData.value || transactionData.value <= 0) {
+      toast.error("Valor inválido. Tente novamente.");
+      return;
+    }
+
     try {
       const user = getItem<{ uuid: string; name: string }>("user");
       if (!user || !user.uuid) {
