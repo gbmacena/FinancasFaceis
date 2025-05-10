@@ -29,11 +29,13 @@ export function TransactionDialog({
   const [transactionData, setTransactionData] = useState<
     Omit<Expense, "uuid" | "category"> & {
       categoryId?: number;
+      formattedValue?: string;
     }
   >({
     type: "entrada",
     title: "",
     value: 0,
+    formattedValue: "R$ 0,00",
     date: "",
     categoryId: undefined,
     installments: undefined,
@@ -162,10 +164,9 @@ export function TransactionDialog({
               <Label htmlFor="valor">Valor (R$)</Label>
               <Input
                 id="valor"
-                type="number"
-                step="0.01"
-                placeholder="0,00"
-                value={transactionData.value}
+                type="text"
+                placeholder="R$ 0,00"
+                value={transactionData.formattedValue || ""}
                 onChange={(e) => handleValueChange(e.target.value)}
                 required
               />
