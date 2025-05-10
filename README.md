@@ -4,15 +4,17 @@
 
 ---
 
-## 📌 Funcionalidades
+## ✨ Funcionalidades
 
-- ✅ Cadastro de entradas financeiras
-- ✅ Cadastro de saídas financeiras
-- ✅ Suporte a parcelamentos de despesas
-- ✅ Suporte a compras recorrentes
+- ✅ Cadastro de entradas e saídas financeiras
+- ✅ Suporte a parcelamentos mensais
+- ✅ Suporte a gastos recorrentes
+- ✅ Painel financeiro com saldo, entradas e saídas
+- ✅ Filtro por mês, categoria e nome do gasto
+- ✅ Impressão de relatório mensal
 - ✅ Autenticação via JWT
 - ✅ Documentação da API com Swagger
-- ✅ Responsividade
+- ✅ Interface responsiva
 
 ---
 
@@ -21,35 +23,30 @@
 ### 🔹 Backend
 - **Node.js**
 - **TypeScript**
-- **PostgreSQL**
 - **Prisma**
-- **JWT para autenticação**
-- **Swagger para documentação da API**
+- **PostgreSQL**
+- **Zod**
+- **JWT**
+- **Swagger**
 
 ### 🔹 Frontend
 - **React com Next.js**
 - **TypeScript**
 - **Tailwind CSS**
+- **React Hook Form**
+- **Zod**
+- **Shadcn UI**
 
 ---
 
-### Pré-requisitos
-- Node.js e npm
-- PostgreSQL instalado e rodando
-- Yarn ou npm
+## 🚀 Acesse o projeto
+
+🔗 [Projeto online (Vercel)](https://financas-faceis.vercel.app)  
+📄 [Documentação da API (Swagger)](https://financasfaceis.onrender.com/api-docs)  
+💻 [Repositório no GitHub](https://github.com/gbmacena/FinancasFaceis)
 
 ---
 
-### Documentação:
+## 👨‍💻 Autor
 
-Como acessar a documentação:
-
-cd backend
-
-npm run dev
-
-Entra nesse link: http://localhost:3001/api-docs
-
-### 👨‍💻 Autor
-Desenvolvido por Gabriel Macena
-
+Desenvolvido por **Gabriel Macena**
