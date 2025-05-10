@@ -131,32 +131,6 @@ export default function DashboardPage() {
           onSelectMonth={setSelectedMonth}
         />
       </div>
-      <div className="mt-4">
-        <Select
-          onValueChange={(value) => {
-            setSelectedCategory(value !== "0" ? Number(value) : null);
-          }}
-          value={selectedCategory !== null ? String(selectedCategory) : "0"}
-        >
-          <SelectTrigger className="w-48">
-            <SelectValue>
-              {selectedCategory !== null
-                ? categories.find(
-                    (category) => category.id === selectedCategory
-                  )?.name || "Todas as categorias"
-                : "Todas as categorias"}
-            </SelectValue>
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="0">Todas as categorias</SelectItem>
-            {categories.map((category) => (
-              <SelectItem key={category.id} value={String(category.id)}>
-                {category.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
     </div>
   );
 
