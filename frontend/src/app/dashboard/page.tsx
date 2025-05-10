@@ -159,13 +159,19 @@ export default function DashboardPage() {
               </button>
             </div>
             <Select
-              onValueChange={(value) =>
-                setSelectedCategory(value ? Number(value) : null)
-              }
-              defaultValue="0"
+              onValueChange={(value) => {
+                setSelectedCategory(value !== "0" ? Number(value) : null);
+              }}
+              value={selectedCategory !== null ? String(selectedCategory) : "0"}
             >
               <SelectTrigger className="w-48">
-                <SelectValue placeholder="Filtrar por categoria" />
+                <SelectValue>
+                  {selectedCategory !== null
+                    ? categories.find(
+                        (category) => category.id === selectedCategory
+                      )?.name || "Todas as categorias"
+                    : "Todas as categorias"}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="0">Todas as categorias</SelectItem>
