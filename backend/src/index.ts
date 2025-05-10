@@ -17,6 +17,7 @@ app.use(
       "https://financas-faceis-581h7q5np-gabriel-macenas-projects-1f1e12d1.vercel.app",
     ],
     methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
   })
 );
