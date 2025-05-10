@@ -30,7 +30,7 @@ export const DashboardTable: React.FC<DashboardTableProps> = ({
                 Data
               </th>
               <th className="border border-gray-200 dark:border-gray-700 p-3 text-left">
-                Ações
+                Editar / Remover
               </th>
             </tr>
           </thead>
