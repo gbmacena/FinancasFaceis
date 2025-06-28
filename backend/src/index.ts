@@ -10,17 +10,19 @@ const PORT = process.env.PORT || 3001;
 
 const app = express();
 
-app.use(
-  cors({
-    origin: [
-      "https://financas-faceis.vercel.app",
-      "https://financas-faceis-581h7q5np-gabriel-macenas-projects-1f1e12d1.vercel.app",
-    ],
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-    credentials: true,
-  })
-);
+// app.use(
+//   cors({
+//     origin: [
+//       "https://financas-faceis.vercel.app",
+//       "https://financas-faceis-581h7q5np-gabriel-macenas-projects-1f1e12d1.vercel.app",
+//     ],
+//     methods: ["GET", "POST", "PUT", "DELETE"],
+//     allowedHeaders: ["Content-Type", "Authorization"],
+//     credentials: true,
+//   })
+// );
+
+app.use(cors());
 
 app.use(express.json());
 
@@ -38,8 +40,8 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: "https://financasfaceis.onrender.com/api",
-        description: "Servidor de produção",
+        url: "http://localhost:3001/api",
+        description: "Servidor local",
       },
     ],
     components: {
