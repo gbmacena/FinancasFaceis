@@ -39,8 +39,7 @@
 
 ---
 
-## 🚀 Acesse o projeto
-
+## 🚀 Acesse o projeto (Rodando apenas local no momento)
 🔗 [Projeto online (Vercel)](https://financas-faceis.vercel.app)  
 📄 [Documentação da API (Swagger)](https://financasfaceis.onrender.com/api-docs)  
 💻 [Repositório no GitHub](https://github.com/gbmacena/FinancasFaceis)
