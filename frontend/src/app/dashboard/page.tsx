@@ -24,6 +24,8 @@ import { User, Expense } from "@/types";
 import { TransactionDialog } from "@/components/TransactionDialog";
 import { useCategories } from "@/hooks/useCategories";
 import { useRouter } from "next/navigation";
+import { CategoryExpensesChart } from "@/components/CategoryExpensesChart";
+import { TopExpensesChart } from "@/components/TopExpensesChart";
 
 export default function DashboardPage() {
   const currentMonth = new Date().toISOString().slice(0, 7);
@@ -348,8 +350,11 @@ export default function DashboardPage() {
         <DashboardHeader />
         <DashboardSummary />
         <DashboardFilters />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          <CategoryExpensesChart expenses={dashboardData.expenses} />
+          <TopExpensesChart expenses={dashboardData.expenses} />
+        </div>
         <DashboardExpenses />
-
         <div className="fixed bottom-10 right-10 max-sm:bottom-6 max-sm:6">
           <TransactionDialog onTransactionAdded={fetchDashboard} />
         </div>
