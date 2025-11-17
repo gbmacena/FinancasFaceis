@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { PrinterIcon, SearchIcon } from "lucide-react";
+// import { Input } from "@/components/ui/input";
+import { PrinterIcon } from "lucide-react";
+// import { SearchIcon } from "lucide-react";
 import { DashboardTable } from "@/components/DashboardTable";
 import { MonthSelector } from "@/components/MonthSelector";
 import {
@@ -33,7 +34,9 @@ export default function DashboardPage() {
   const [selectedYear, setSelectedYear] = useState<string>(
     currentMonth.split("-")[0]
   );
-  const [searchQuery, setSearchQuery] = useState<string>("");
+  // const [searchQuery, setSearchQuery] = useState<string>("");
+  // const [activeSearchQuery, setActiveSearchQuery] = useState<string>("");
+  const [activeSearchQuery] = useState<string>("");
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
   const [dashboardData, setDashboardData] = useState<{
     user: User;
@@ -136,6 +139,10 @@ export default function DashboardPage() {
     </div>
   );
 
+  // const handleSearch = useCallback(() => {
+  //   setActiveSearchQuery(searchQuery);
+  // }, [searchQuery]);
+
   const DashboardExpenses = () => {
     if (!dashboardData) return null;
 
@@ -143,23 +150,25 @@ export default function DashboardPage() {
       <Card>
         <CardContent className="p-6">
           <div className="flex flex-wrap gap-2 mb-4 items-center">
-            <div className="relative max-w-xs w-full">
+            {/* <div className="relative max-w-xs w-full">
               <Input
                 placeholder="Filtrar por título"
                 className="pr-10"
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                }}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter") fetchDashboard();
+                  if (e.key === "Enter") handleSearch();
                 }}
               />
               <button
-                onClick={fetchDashboard}
+                onClick={handleSearch}
                 className="absolute inset-y-0 right-0 flex items-center pr-3"
               >
                 <SearchIcon className="h-5 w-5 text-gray-800 hover:text-gray-600" />
               </button>
-            </div>
+            </div> */}
             <Select
               onValueChange={(value) => {
                 setSelectedCategory(value !== "0" ? Number(value) : null);
@@ -211,7 +220,7 @@ export default function DashboardPage() {
     }
   }, [router]);
 
-  const fetchDashboard = async () => {
+  const fetchDashboard = useCallback(async () => {
     if (!userId) return;
 
     try {
@@ -224,7 +233,7 @@ export default function DashboardPage() {
 
       const data = await userService.getDashboard(userId as string, {
         month: formattedMonth,
-        title: searchQuery,
+        title: activeSearchQuery,
         category: selectedCategoryName || undefined,
       });
       setDashboardData(data);
@@ -232,11 +241,19 @@ export default function DashboardPage() {
       router.push("/login");
       toast.error("Erro ao carregar o dashboard. Tente novamente.");
     }
-  };
+  }, [
+    userId,
+    selectedYear,
+    selectedMonth,
+    selectedCategory,
+    categories,
+    activeSearchQuery,
+    router,
+  ]);
 
   useEffect(() => {
     fetchDashboard();
-  }, [userId, selectedMonth, selectedYear, selectedCategory]);
+  }, [fetchDashboard]);
 
   const handleDeleteExpense = async (expenseId: string) => {
     toast(
@@ -344,16 +361,21 @@ export default function DashboardPage() {
     );
   }
 
+  const hasActiveFilters =
+    activeSearchQuery.trim() !== "" || selectedCategory !== null;
+
   return (
     <main className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4 md:p-6">
       <div className="max-w-7xl mx-auto">
         <DashboardHeader />
         <DashboardSummary />
         <DashboardFilters />
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-          <CategoryExpensesChart expenses={dashboardData.expenses} />
-          <TopExpensesChart expenses={dashboardData.expenses} />
-        </div>
+        {!hasActiveFilters && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <CategoryExpensesChart expenses={dashboardData.expenses} />
+            <TopExpensesChart expenses={dashboardData.expenses} />
+          </div>
+        )}
         <DashboardExpenses />
         <div className="fixed bottom-10 right-10 max-sm:bottom-6 max-sm:6">
           <TransactionDialog onTransactionAdded={fetchDashboard} />

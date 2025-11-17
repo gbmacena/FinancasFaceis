@@ -26,13 +26,8 @@ export function TransactionDialog({
   onTransactionAdded: () => void;
 }) {
   const [open, setOpen] = useState(false);
-  const [transactionData, setTransactionData] = useState<
-    Omit<Expense, "uuid" | "category"> & {
-      categoryId?: number;
-      formattedValue?: string;
-    }
-  >({
-    type: "entrada",
+  const initialFormState = {
+    type: "entrada" as "entrada" | "saida",
     title: "",
     value: 0,
     formattedValue: "R$ 0,00",
@@ -41,8 +36,18 @@ export function TransactionDialog({
     installments: undefined,
     isRecurring: false,
     endDate: "",
-  });
+  };
+  const [transactionData, setTransactionData] = useState<
+    Omit<Expense, "uuid" | "category"> & {
+      categoryId?: number;
+      formattedValue?: string;
+    }
+  >(initialFormState);
   const categories = useCategories();
+
+  const resetForm = () => {
+    setTransactionData(initialFormState);
+  };
 
   const handleChange = <K extends keyof typeof transactionData>(
     field: K,
@@ -112,6 +117,7 @@ export function TransactionDialog({
           : "Saída adicionada com sucesso!"
       );
 
+      resetForm();
       setOpen(false);
     } catch {
       toast.error(
@@ -123,7 +129,15 @@ export function TransactionDialog({
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog
+      open={open}
+      onOpenChange={(isOpen) => {
+        setOpen(isOpen);
+        if (!isOpen) {
+          resetForm();
+        }
+      }}
+    >
       <DialogTrigger asChild>
         <Button className="gap-2">
           <PlusCircle className="h-4 w-4" /> Nova Transação

@@ -1,7 +1,6 @@
 import axios from "axios";
 import { toast } from "sonner";
 import { getItem, removeItem } from "@/utils/storage";
-import { useRouter } from "next/navigation";
 
 const API_URL = "http://localhost:3001";
 
@@ -21,12 +20,19 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      toast.error("Sessão expirada. Faça login novamente.");
-      removeItem("accessToken");
-      removeItem("user");
+      const isAuthRoute =
+        error.config?.url?.includes("/auth/login") ||
+        error.config?.url?.includes("/auth/register");
 
-      const router = useRouter();
-      router.push("/login");
+      if (!isAuthRoute) {
+        toast.error("Sessão expirada. Faça login novamente.");
+        removeItem("accessToken");
+        removeItem("user");
+
+        if (typeof window !== "undefined") {
+          window.location.href = "/login";
+        }
+      }
     }
     return Promise.reject(error);
   }
