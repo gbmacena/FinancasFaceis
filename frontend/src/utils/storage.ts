@@ -1,12 +1,17 @@
 export const setItem = <T>(key: string, value: T): void => {
-  localStorage.setItem(key, JSON.stringify(value));
+  if (typeof window !== "undefined") {
+    localStorage.setItem(key, JSON.stringify(value));
+  }
 };
 
 export const getItem = <T>(key: string): T | null => {
+  if (typeof window === "undefined") return null;
   const item = localStorage.getItem(key);
   return item ? (JSON.parse(item) as T) : null;
 };
 
 export const removeItem = (key: string): void => {
-  localStorage.removeItem(key);
+  if (typeof window !== "undefined") {
+    localStorage.removeItem(key);
+  }
 };
