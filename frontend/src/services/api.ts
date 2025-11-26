@@ -2,7 +2,7 @@ import axios from "axios";
 import { toast } from "sonner";
 import { getItem, removeItem } from "@/utils/storage";
 
-const API_URL = "https://financasfaceis-2.onrender.com/api";
+const API_URL = "https://financasfaceis-2.onrender.com";
 
 const api = axios.create({
   baseURL: API_URL,
