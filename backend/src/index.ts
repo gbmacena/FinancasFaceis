@@ -11,17 +11,11 @@ const PORT = process.env.PORT || 3001;
 const app = express();
 
 app.use(cors({
-  origin: [
-    "https://financas-faceis.vercel.app",
-    "https://financas-faceis-581h7q5np-gabriel-macenas-projects-1f1e12d1.vercel.app",
-    "http://localhost:3000"
-  ],
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: true,
+  origin: "*",
+  methods: "*",
+  allowedHeaders: "*",
 }));
 
-app.options("*", cors());
 
 app.use(express.json());
 
