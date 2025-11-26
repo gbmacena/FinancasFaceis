@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from "react";
 import { Edit, Trash } from "lucide-react";
 import { EditExpenseDialog } from "./EditExpenseDialog";
