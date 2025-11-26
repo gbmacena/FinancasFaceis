@@ -3,6 +3,7 @@
 import { Chart } from "react-chartjs-2";
 import {
   Chart as ChartJS,
+  BarController,
   BarElement,
   CategoryScale,
   LinearScale,
@@ -12,7 +13,14 @@ import {
 } from "chart.js";
 import { Expense } from "@/types";
 
-ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
+ChartJS.register(
+  BarController,
+  BarElement,
+  CategoryScale,
+  LinearScale,
+  Tooltip,
+  Legend
+);
 
 type Props = {
   expenses: Expense[];
