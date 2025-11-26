@@ -29,11 +29,8 @@ import { CategoryExpensesChart } from "@/components/CategoryExpensesChart";
 import { TopExpensesChart } from "@/components/TopExpensesChart";
 
 export default function DashboardPage() {
-  const currentMonth = new Date().toISOString().slice(0, 7);
-  const [selectedMonth, setSelectedMonth] = useState<string>(currentMonth);
-  const [selectedYear, setSelectedYear] = useState<string>(
-    currentMonth.split("-")[0]
-  );
+  const [selectedMonth, setSelectedMonth] = useState<string>("");
+  const [selectedYear, setSelectedYear] = useState<string>("");
   // const [searchQuery, setSearchQuery] = useState<string>("");
   // const [activeSearchQuery, setActiveSearchQuery] = useState<string>("");
   const [activeSearchQuery] = useState<string>("");
@@ -45,6 +42,12 @@ export default function DashboardPage() {
   const [userId, setUserId] = useState<string | null>(null);
   const router = useRouter();
   const categories = useCategories();
+
+  useEffect(() => {
+    const currentMonth = new Date().toISOString().slice(0, 7);
+    setSelectedMonth(currentMonth);
+    setSelectedYear(currentMonth.split("-")[0]);
+  }, []);
 
   const DashboardHeader = () => (
     <div className="flex justify-between items-center mb-6">
@@ -221,7 +224,7 @@ export default function DashboardPage() {
   }, [router]);
 
   const fetchDashboard = useCallback(async () => {
-    if (!userId) return;
+    if (!userId || !selectedMonth || !selectedYear) return;
 
     try {
       const formattedMonth = `${selectedYear}-${selectedMonth.split("-")[1]}`;
