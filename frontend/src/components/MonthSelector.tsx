@@ -40,8 +40,8 @@ export function MonthSelector({
             onClick={() => onSelectMonth(monthValue)}
             className={
               selectedMonth === monthValue
-                ? "bg-primary text-primary-foreground"
-                : "bg-gray-200 hover:bg-gray-300 dark:bg-gray-800 dark:hover:bg-gray-700"
+                ? "bg-emerald-500 text-white hover:bg-emerald-600 font-semibold"
+                : "bg-white/10 text-white border-white/20 hover:bg-white/20"
             }
           >
             {month.label}

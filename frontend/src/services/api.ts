@@ -2,14 +2,18 @@ import axios from "axios";
 import { toast } from "sonner";
 import { getItem, removeItem } from "@/utils/storage";
 
-const API_URL = "https://financasfaceis-3.onrender.com";
+const API_URL = "http://localhost:3001";
 
 const api = axios.create({
   baseURL: API_URL,
 });
 
 api.interceptors.request.use((config) => {
-  if (typeof window !== "undefined") {
+  const isAuthRoute =
+    config.url?.includes("/auth/login") ||
+    config.url?.includes("/auth/register");
+
+  if (!isAuthRoute && typeof window !== "undefined") {
     const token = getItem("accessToken");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;

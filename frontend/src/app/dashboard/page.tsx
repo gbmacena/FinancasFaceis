@@ -3,10 +3,13 @@
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-// import { Input } from "@/components/ui/input";
-import { PrinterIcon } from "lucide-react";
-// import { SearchIcon } from "lucide-react";
+import {
+  LogOutIcon,
+  TrendingUpIcon,
+  TrendingDownIcon,
+  WalletIcon,
+  PrinterIcon,
+} from "lucide-react";
 import { DashboardTable } from "@/components/DashboardTable";
 import { MonthSelector } from "@/components/MonthSelector";
 import {
@@ -31,8 +34,6 @@ import { TopExpensesChart } from "@/components/TopExpensesChart";
 export default function DashboardPage() {
   const [selectedMonth, setSelectedMonth] = useState<string>("");
   const [selectedYear, setSelectedYear] = useState<string>("");
-  // const [searchQuery, setSearchQuery] = useState<string>("");
-  // const [activeSearchQuery, setActiveSearchQuery] = useState<string>("");
   const [activeSearchQuery] = useState<string>("");
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
   const [dashboardData, setDashboardData] = useState<{
@@ -50,166 +51,326 @@ export default function DashboardPage() {
   }, []);
 
   const DashboardHeader = () => (
-    <div className="flex justify-between items-center mb-6">
-      <Link
-        href="/dashboard"
-        className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2"
-      >
-        FinançasFáceis
-      </Link>
-      <Button
-        variant="outline"
-        size="sm"
-        className="gap-2"
-        onClick={handlePrint}
-      >
-        <PrinterIcon className="h-4 w-4" /> Imprimir
-      </Button>
-    </div>
+    <header className="bg-white/5 backdrop-blur-md border-b border-white/10 sticky top-0 z-40 mb-8">
+      <div className="max-w-7xl mx-auto px-6 py-4">
+        <div className="flex items-center justify-between">
+          {/* Logo e Nome */}
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-lg flex items-center justify-center">
+              <WalletIcon className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <Link
+                href="/dashboard"
+                className="text-xl font-bold text-white hover:text-emerald-400 transition-colors"
+              >
+                FinançasFáceis
+              </Link>
+              {dashboardData && (
+                <p className="text-xs text-slate-400">
+                  Olá, {dashboardData.user.name.split(" ")[0]}!
+                </p>
+              )}
+            </div>
+          </div>
+
+          {/* Actions */}
+          <div className="flex items-center gap-3">
+            <TransactionDialog onTransactionAdded={fetchDashboard} />
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-red-400 hover:text-white hover:bg-red-500/20"
+              title="Sair"
+              onClick={() => {
+                localStorage.clear();
+                router.push("/");
+              }}
+            >
+              <LogOutIcon className="w-5 h-5" />
+            </Button>
+          </div>
+        </div>
+      </div>
+    </header>
   );
 
   const DashboardSummary = () => {
     if (!dashboardData) return null;
 
+    const totalIncome = dashboardData.user.income;
+    const totalExpenses = Math.abs(dashboardData.user.expenses);
+    const balance = dashboardData.user.balance;
+    const incomeCount = dashboardData.expenses.filter(
+      (e) => e.value > 0
+    ).length;
+    const expenseCount = dashboardData.expenses.filter(
+      (e) => e.value < 0
+    ).length;
+
     return (
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-        <Card className="col-span-1">
-          <CardContent className="p-6">
-            <div className="flex justify-between items-center">
-              <div>
-                <p className="text-lg font-medium">
-                  Olá, {dashboardData.user.name}
-                </p>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        {/* Card Saldo */}
+        <div className="relative overflow-hidden bg-gradient-to-br from-emerald-500/10 via-emerald-600/10 to-emerald-700/10 backdrop-blur-sm border border-emerald-500/20 rounded-2xl p-6 group hover:shadow-2xl hover:shadow-emerald-500/20 transition-all">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl -mr-16 -mt-16"></div>
+          <div className="relative z-10">
+            <div className="flex items-start justify-between mb-4">
+              <div className="p-3 bg-emerald-500/20 rounded-xl">
+                <WalletIcon className="w-6 h-6 text-emerald-400" />
               </div>
               <div className="text-right">
-                <p
-                  className={`text-3xl font-bold ${
-                    dashboardData.user.balance < 0 ? "text-red-500" : ""
-                  }`}
-                >
-                  {formatCurrency(dashboardData.user.balance)}
+                <p className="text-xs text-emerald-400 font-medium">
+                  Saldo Atual
                 </p>
-                <p className="text-sm text-center text-muted-foreground">
-                  Saldo atual
-                </p>
+                <p className="text-xs text-slate-500 mt-1">Disponível</p>
               </div>
             </div>
-          </CardContent>
-        </Card>
+            <p className="text-3xl font-bold text-white mb-2">
+              {formatCurrency(balance)}
+            </p>
+            <div className="flex items-center gap-2 text-sm">
+              <div
+                className={`flex items-center gap-1 ${
+                  balance >= 0 ? "text-emerald-400" : "text-red-400"
+                }`}
+              >
+                {balance >= 0 ? (
+                  <TrendingUpIcon className="w-4 h-4" />
+                ) : (
+                  <TrendingDownIcon className="w-4 h-4" />
+                )}
+                <span className="font-medium">
+                  {balance >= 0 ? "Positivo" : "Negativo"}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
 
-        <Card className="col-span-1 md:col-span-2">
-          <CardContent className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <p className="text-sm text-muted-foreground">Receita total:</p>
-                <p className="text-xl font-medium">
-                  {formatCurrency(dashboardData.user.income)}
-                </p>
+        {/* Card Receitas */}
+        <div className="relative overflow-hidden bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 group hover:shadow-2xl hover:shadow-blue-500/10 transition-all">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl -mr-16 -mt-16"></div>
+          <div className="relative z-10">
+            <div className="flex items-start justify-between mb-4">
+              <div className="p-3 bg-blue-500/20 rounded-xl">
+                <TrendingUpIcon className="w-6 h-6 text-blue-400" />
               </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Despesas total:</p>
-                <p className="text-xl font-medium">
-                  {formatCurrency(dashboardData.user.expenses)}
+              <div className="text-right">
+                <p className="text-xs text-blue-400 font-medium">Receitas</p>
+                <p className="text-xs text-slate-500 mt-1">
+                  {incomeCount} transações
                 </p>
               </div>
             </div>
-          </CardContent>
-        </Card>
+            <p className="text-3xl font-bold text-white mb-2">
+              {formatCurrency(totalIncome)}
+            </p>
+            <div className="h-1 bg-white/10 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-blue-500 rounded-full"
+                style={{ width: "100%" }}
+              ></div>
+            </div>
+          </div>
+        </div>
+
+        {/* Card Despesas */}
+        <div className="relative overflow-hidden bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 group hover:shadow-2xl hover:shadow-red-500/10 transition-all">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-red-500/10 rounded-full blur-3xl -mr-16 -mt-16"></div>
+          <div className="relative z-10">
+            <div className="flex items-start justify-between mb-4">
+              <div className="p-3 bg-red-500/20 rounded-xl">
+                <TrendingDownIcon className="w-6 h-6 text-red-400" />
+              </div>
+              <div className="text-right">
+                <p className="text-xs text-red-400 font-medium">Despesas</p>
+                <p className="text-xs text-slate-500 mt-1">
+                  {expenseCount} transações
+                </p>
+              </div>
+            </div>
+            <p className="text-3xl font-bold text-white mb-2">
+              {formatCurrency(totalExpenses)}
+            </p>
+            <div className="h-1 bg-white/10 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-red-500 rounded-full transition-all"
+                style={{
+                  width: `${
+                    totalIncome > 0
+                      ? Math.min((totalExpenses / totalIncome) * 100, 100)
+                      : 0
+                  }%`,
+                }}
+              ></div>
+            </div>
+          </div>
+        </div>
       </div>
     );
   };
 
   const DashboardFilters = () => (
-    <div className="mb-6">
-      <div className="flex flex-wrap gap-2 items-center">
-        <Select onValueChange={setSelectedYear} defaultValue={selectedYear}>
-          <SelectTrigger className="w-32">
-            <SelectValue placeholder="Selecione o ano" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="2023">2023</SelectItem>
-            <SelectItem value="2024">2024</SelectItem>
-            <SelectItem value="2025">2025</SelectItem>
-            <SelectItem value="2026">2026</SelectItem>
-          </SelectContent>
-        </Select>
+    <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 mb-8">
+      <h3 className="text-lg font-semibold text-white mb-4">Filtros</h3>
+      <div className="flex flex-wrap gap-4">
+        {/* Ano */}
+        <div className="flex-1 min-w-[120px]">
+          <label className="text-xs text-slate-400 mb-2 block">Ano</label>
+          <Select onValueChange={setSelectedYear} value={selectedYear}>
+            <SelectTrigger className="w-full bg-white/5 border-white/20 text-white hover:bg-white/10">
+              <SelectValue placeholder="Ano" />
+            </SelectTrigger>
+            <SelectContent className="bg-slate-800 border-slate-700">
+              <SelectItem
+                value="2023"
+                className="text-white hover:bg-slate-700"
+              >
+                2023
+              </SelectItem>
+              <SelectItem
+                value="2024"
+                className="text-white hover:bg-slate-700"
+              >
+                2024
+              </SelectItem>
+              <SelectItem
+                value="2025"
+                className="text-white hover:bg-slate-700"
+              >
+                2025
+              </SelectItem>
+              <SelectItem
+                value="2026"
+                className="text-white hover:bg-slate-700"
+              >
+                2026
+              </SelectItem>
+              <SelectItem
+                value="2027"
+                className="text-white hover:bg-slate-700"
+              >
+                2027
+              </SelectItem>
+              <SelectItem
+                value="2028"
+                className="text-white hover:bg-slate-700"
+              >
+                2028
+              </SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
 
-        <MonthSelector
-          selectedMonth={selectedMonth}
-          onSelectMonth={setSelectedMonth}
-        />
+        {/* Mês */}
+        <div className="flex-1 min-w-[200px]">
+          <label className="text-xs text-slate-400 mb-2 block">Mês</label>
+          <MonthSelector
+            selectedMonth={selectedMonth}
+            onSelectMonth={setSelectedMonth}
+          />
+        </div>
+
+        {/* Categoria */}
+        <div className="flex-1 min-w-[200px]">
+          <label className="text-xs text-slate-400 mb-2 block">Categoria</label>
+          <Select
+            onValueChange={(value) => {
+              setSelectedCategory(value !== "0" ? Number(value) : null);
+            }}
+            value={selectedCategory !== null ? String(selectedCategory) : "0"}
+          >
+            <SelectTrigger className="w-full bg-white/5 border-white/20 text-white hover:bg-white/10">
+              <SelectValue>
+                {selectedCategory !== null
+                  ? categories.find((c) => c.id === selectedCategory)?.name ||
+                    "Todas"
+                  : "Todas as categorias"}
+              </SelectValue>
+            </SelectTrigger>
+            <SelectContent className="bg-slate-800 border-slate-700">
+              <SelectItem value="0" className="text-white hover:bg-slate-700">
+                Todas as categorias
+              </SelectItem>
+              {categories.map((category) => (
+                <SelectItem
+                  key={category.id}
+                  value={String(category.id)}
+                  className="text-white hover:bg-slate-700"
+                >
+                  {category.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
       </div>
     </div>
   );
-
-  // const handleSearch = useCallback(() => {
-  //   setActiveSearchQuery(searchQuery);
-  // }, [searchQuery]);
 
   const DashboardExpenses = () => {
     if (!dashboardData) return null;
 
     return (
-      <Card>
-        <CardContent className="p-6">
-          <div className="flex flex-wrap gap-2 mb-4 items-center">
-            {/* <div className="relative max-w-xs w-full">
-              <Input
-                placeholder="Filtrar por título"
-                className="pr-10"
-                value={searchQuery}
-                onChange={(e) => {
-                  setSearchQuery(e.target.value);
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") handleSearch();
-                }}
-              />
-              <button
-                onClick={handleSearch}
-                className="absolute inset-y-0 right-0 flex items-center pr-3"
+      <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 mb-8">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-xl font-bold text-white">Transações</h2>
+          <div className="flex items-center gap-3">
+            <span className="text-sm text-slate-400">
+              {dashboardData.expenses.length} registros
+            </span>
+            {dashboardData.expenses.length > 0 && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="text-slate-300 border-slate-600 hover:bg-slate-800 hover:text-white gap-2"
+                onClick={handlePrint}
               >
-                <SearchIcon className="h-5 w-5 text-gray-800 hover:text-gray-600" />
-              </button>
-            </div> */}
-            <Select
-              onValueChange={(value) => {
-                setSelectedCategory(value !== "0" ? Number(value) : null);
-              }}
-              value={selectedCategory !== null ? String(selectedCategory) : "0"}
-            >
-              <SelectTrigger className="w-48">
-                <SelectValue>
-                  {selectedCategory !== null
-                    ? categories.find(
-                        (category) => category.id === selectedCategory
-                      )?.name || "Todas as categorias"
-                    : "Todas as categorias"}
-                </SelectValue>
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="0">Todas as categorias</SelectItem>
-                {categories.map((category) => (
-                  <SelectItem key={category.id} value={String(category.id)}>
-                    {category.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+                <PrinterIcon className="w-4 h-4" />
+                <span className="max-sm:hidden">Imprimir</span>
+              </Button>
+            )}
           </div>
-          {dashboardData.expenses.length > 0 ? (
-            <DashboardTable
-              expenses={dashboardData.expenses}
-              onEdit={fetchDashboard}
-              onRemove={handleDeleteExpense}
-            />
-          ) : (
-            <p className="text-center text-gray-500">
-              Nenhuma despesa encontrada.
+        </div>
+
+        {dashboardData.expenses.length > 0 ? (
+          <DashboardTable
+            expenses={dashboardData.expenses}
+            onEdit={fetchDashboard}
+            onRemove={handleDeleteExpense}
+          />
+        ) : (
+          <div className="text-center py-16">
+            <div className="w-20 h-20 bg-slate-800/50 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span className="text-4xl">💸</span>
+            </div>
+            <p className="text-white text-xl font-bold mb-2">
+              Nenhuma despesa registrada
             </p>
-          )}
-        </CardContent>
-      </Card>
+            <p className="text-slate-400 text-base mb-4">
+              Este painel exibe apenas suas{" "}
+              <span className="text-red-400 font-semibold">
+                saídas de dinheiro
+              </span>{" "}
+              (despesas).
+            </p>
+            <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-lg p-4 max-w-md mx-auto mb-4">
+              <p className="text-emerald-400 text-sm">
+                💡 <span className="font-semibold">Dica:</span> As entradas
+                (receitas) são registradas automaticamente no seu saldo, mas não
+                aparecem nesta lista.
+              </p>
+            </div>
+            <p className="text-slate-500 text-sm">
+              Clique em{" "}
+              <span className="text-emerald-400 font-semibold">
+                &quot;Nova Transação&quot;
+              </span>{" "}
+              para adicionar sua primeira despesa
+            </p>
+          </div>
+        )}
+      </div>
     );
   };
 
@@ -258,6 +419,86 @@ export default function DashboardPage() {
     fetchDashboard();
   }, [fetchDashboard]);
 
+  const handlePrint = () => {
+    if (!dashboardData) return;
+
+    const printWindow = window.open("", "_blank");
+    if (!printWindow) return;
+
+    const totalExpenses = dashboardData.expenses.reduce(
+      (sum, expense) => sum + expense.value,
+      0
+    );
+
+    const printContent = `
+      <html>
+        <head>
+          <title>Relatório de Despesas</title>
+          <style>
+            body { font-family: Arial, sans-serif; margin: 20px; }
+            h1 { text-align: center; color: #10b981; }
+            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+            th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+            th { background-color: #10b981; color: white; }
+            .total-row { font-weight: bold; background-color: #f4f4f4; }
+            .header { text-align: center; margin-bottom: 20px; }
+            .date { color: #666; font-size: 14px; }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <h1>💰 FinançasFáceis - Relatório de Despesas</h1>
+            <p class="date">Período: ${selectedMonth} | Gerado em: ${new Date().toLocaleDateString(
+      "pt-BR"
+    )}</p>
+            ${
+              selectedCategory !== null
+                ? `<p>Categoria: ${
+                    categories.find((c) => c.id === selectedCategory)?.name ||
+                    "Todas"
+                  }</p>`
+                : ""
+            }
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Título</th>
+                <th>Categoria</th>
+                <th>Valor</th>
+                <th>Data</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${dashboardData.expenses
+                .map(
+                  (expense) => `
+                <tr>
+                  <td>${expense.title}</td>
+                  <td>${expense.category.name}</td>
+                  <td style="color: ${
+                    expense.value < 0 ? "#ef4444" : "#10b981"
+                  }">${formatCurrency(expense.value)}</td>
+                  <td>${new Date(expense.date).toLocaleDateString("pt-BR")}</td>
+                </tr>`
+                )
+                .join("")}
+              <tr class="total-row">
+                <td colspan="2">Total de Despesas</td>
+                <td colspan="2">${formatCurrency(totalExpenses)}</td>
+              </tr>
+            </tbody>
+          </table>
+        </body>
+      </html>
+    `;
+
+    printWindow.document.open();
+    printWindow.document.write(printContent);
+    printWindow.document.close();
+    printWindow.print();
+  };
+
   const handleDeleteExpense = async (expenseId: string) => {
     toast(
       <div>
@@ -293,74 +534,61 @@ export default function DashboardPage() {
     );
   };
 
-  const handlePrint = () => {
-    if (!dashboardData) return;
-
-    const printWindow = window.open("", "_blank");
-    if (!printWindow) return;
-
-    const totalExpenses = dashboardData.expenses.reduce(
-      (sum, expense) => sum + expense.value,
-      0
-    );
-
-    const printContent = `
-      <html>
-        <head>
-          <title>Relatório de Despesas</title>
-          <style>
-            body { font-family: Arial, sans-serif; margin: 20px; }
-            table { width: 100%; border-collapse: collapse; }
-            th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-            th { background-color: #f4f4f4; }
-            h1 { text-align: center; }
-            .total-row { font-weight: bold; background-color: #f4f4f4; }
-          </style>
-        </head>
-        <body>
-          <h1>Relatório de Despesas - ${selectedMonth}</h1>
-          <table>
-            <thead>
-              <tr>
-                <th>Nome</th>
-                <th>Categoria</th>
-                <th>Valor</th>
-                <th>Data</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${dashboardData.expenses
-                .map(
-                  (expense) => `
-                <tr>
-                  <td>${expense.title}</td>
-                  <td>${expense.category.name}</td>
-                  <td>${formatCurrency(expense.value)}</td>
-                  <td>${new Date(expense.date).toLocaleDateString()}</td>
-                </tr>`
-                )
-                .join("")}
-              <tr class="total-row">
-                <td colspan="2">Total</td>
-                <td colspan="2">${formatCurrency(totalExpenses)}</td>
-              </tr>
-            </tbody>
-          </table>
-        </body>
-      </html>
-    `;
-
-    printWindow.document.open();
-    printWindow.document.write(printContent);
-    printWindow.document.close();
-    printWindow.print();
-  };
-
   if (!dashboardData) {
     return (
-      <main className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500 border-solid"></div>
-      </main>
+      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+        <DashboardHeader />
+        <div className="max-w-7xl mx-auto px-6 pb-12">
+          {/* Skeleton Summary Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            {[1, 2, 3].map((i) => (
+              <div
+                key={i}
+                className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 animate-pulse"
+              >
+                <div className="flex justify-between mb-4">
+                  <div className="w-12 h-12 bg-white/10 rounded-xl"></div>
+                  <div className="w-20 h-6 bg-white/10 rounded"></div>
+                </div>
+                <div className="space-y-3">
+                  <div className="w-32 h-8 bg-white/10 rounded"></div>
+                  <div className="w-full h-1 bg-white/10 rounded-full"></div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Skeleton Filters */}
+          <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 mb-8 animate-pulse">
+            <div className="w-32 h-6 bg-white/10 rounded mb-4"></div>
+            <div className="flex gap-4">
+              <div className="w-32 h-10 bg-white/10 rounded"></div>
+              <div className="w-48 h-10 bg-white/10 rounded"></div>
+              <div className="w-48 h-10 bg-white/10 rounded"></div>
+            </div>
+          </div>
+
+          {/* Skeleton Table */}
+          <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 animate-pulse">
+            <div className="w-32 h-6 bg-white/10 rounded mb-6"></div>
+            <div className="space-y-3">
+              {[1, 2, 3, 4].map((i) => (
+                <div
+                  key={i}
+                  className="flex items-center gap-4 p-4 bg-white/5 rounded-lg"
+                >
+                  <div className="w-10 h-10 bg-white/10 rounded-lg"></div>
+                  <div className="flex-1 space-y-2">
+                    <div className="w-3/4 h-4 bg-white/10 rounded"></div>
+                    <div className="w-1/2 h-3 bg-white/10 rounded"></div>
+                  </div>
+                  <div className="w-24 h-6 bg-white/10 rounded"></div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
     );
   }
 
@@ -368,22 +596,31 @@ export default function DashboardPage() {
     activeSearchQuery.trim() !== "" || selectedCategory !== null;
 
   return (
-    <main className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4 md:p-6">
-      <div className="max-w-7xl mx-auto">
-        <DashboardHeader />
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+      {/* Background decorativo sutil */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none opacity-30">
+        <div className="absolute top-0 right-1/4 w-96 h-96 bg-emerald-500/20 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl"></div>
+      </div>
+
+      <DashboardHeader />
+
+      <div className="max-w-7xl mx-auto px-6 pb-12 relative z-10">
         <DashboardSummary />
         <DashboardFilters />
-        {!hasActiveFilters && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            <CategoryExpensesChart expenses={dashboardData.expenses} />
-            <TopExpensesChart expenses={dashboardData.expenses} />
-          </div>
-        )}
+
+        {/* Gráficos */}
+        {!hasActiveFilters &&
+          dashboardData &&
+          dashboardData.expenses.length > 0 && (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+              <CategoryExpensesChart expenses={dashboardData.expenses} />
+              <TopExpensesChart expenses={dashboardData.expenses} />
+            </div>
+          )}
+
         <DashboardExpenses />
-        <div className="fixed bottom-10 right-10 max-sm:bottom-6 max-sm:6">
-          <TransactionDialog onTransactionAdded={fetchDashboard} />
-        </div>
       </div>
-    </main>
+    </div>
   );
 }

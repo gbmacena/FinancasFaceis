@@ -139,28 +139,32 @@ export function TransactionDialog({
       }}
     >
       <DialogTrigger asChild>
-        <Button className="gap-2">
-          <PlusCircle className="h-4 w-4" /> Nova Transação
+        <Button className="gap-2 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold shadow-lg shadow-emerald-500/30">
+          <PlusCircle className="h-5 w-5" /> Nova Transação
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] bg-slate-900 border-slate-700">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>Adicionar Transação</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-white">
+              Adicionar Transação
+            </DialogTitle>
+            <DialogDescription className="text-slate-400">
               Preencha os detalhes da transação abaixo.
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
-              <Label htmlFor="tipo">Tipo</Label>
+              <Label htmlFor="tipo" className="text-white">
+                Tipo
+              </Label>
               <select
                 id="tipo"
                 value={transactionData.type}
                 onChange={(e) =>
                   handleChange("type", e.target.value as "entrada" | "saida")
                 }
-                className="border rounded-md p-2"
+                className="border border-slate-600 rounded-md p-2 bg-slate-800 text-white"
                 required
               >
                 <option value="entrada">Entrada</option>
@@ -169,18 +173,23 @@ export function TransactionDialog({
             </div>
             {transactionData.type === "saida" && (
               <div className="grid gap-2">
-                <Label htmlFor="titulo">Título</Label>
+                <Label htmlFor="titulo" className="text-white">
+                  Título
+                </Label>
                 <Input
                   id="titulo"
                   placeholder="Ex: Aluguel, Mercado"
                   value={transactionData.title}
                   onChange={(e) => handleChange("title", e.target.value)}
                   required
+                  className="bg-slate-800 text-white border-slate-600"
                 />
               </div>
             )}
             <div className="grid gap-2">
-              <Label htmlFor="valor">Valor (R$)</Label>
+              <Label htmlFor="valor" className="text-white">
+                Valor (R$)
+              </Label>
               <Input
                 id="valor"
                 type="text"
@@ -188,29 +197,35 @@ export function TransactionDialog({
                 value={transactionData.formattedValue || ""}
                 onChange={(e) => handleValueChange(e.target.value)}
                 required
+                className="bg-slate-800 text-white border-slate-600"
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="data">Data</Label>
+              <Label htmlFor="data" className="text-white">
+                Data
+              </Label>
               <Input
                 id="data"
                 type="date"
                 value={transactionData.date}
                 onChange={(e) => handleChange("date", e.target.value)}
                 required
+                className="bg-slate-800 text-white border-slate-600 [&::-webkit-calendar-picker-indicator]:filter [&::-webkit-calendar-picker-indicator]:invert"
               />
             </div>
             {transactionData.type === "saida" && (
               <>
                 <div className="grid gap-2">
-                  <Label htmlFor="categoria">Categoria</Label>
+                  <Label htmlFor="categoria" className="text-white">
+                    Categoria
+                  </Label>
                   <select
                     id="categoria"
                     value={transactionData.categoryId || ""}
                     onChange={(e) =>
                       handleChange("categoryId", Number(e.target.value))
                     }
-                    className="border rounded-md p-2"
+                    className="border border-slate-600 rounded-md p-2 bg-slate-800 text-white"
                     required
                   >
                     <option value="" disabled>
@@ -224,7 +239,9 @@ export function TransactionDialog({
                   </select>
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="parcelas">Parcelas</Label>
+                  <Label htmlFor="parcelas" className="text-white">
+                    Parcelas
+                  </Label>
                   <Input
                     id="parcelas"
                     type="number"
@@ -233,6 +250,7 @@ export function TransactionDialog({
                     onChange={(e) =>
                       handleChange("installments", Number(e.target.value))
                     }
+                    className="bg-slate-800 text-white border-slate-600"
                   />
                 </div>
                 <div className="flex items-center gap-2">
@@ -245,16 +263,21 @@ export function TransactionDialog({
                     }
                     className="w-4 h-4"
                   />
-                  <Label htmlFor="recorrente">É recorrente?</Label>
+                  <Label htmlFor="recorrente" className="text-white">
+                    É recorrente?
+                  </Label>
                 </div>
                 {transactionData.isRecurring && (
                   <div className="grid gap-2">
-                    <Label htmlFor="data-final">Data Final</Label>
+                    <Label htmlFor="data-final" className="text-white">
+                      Data Final
+                    </Label>
                     <Input
                       id="data-final"
                       type="date"
                       value={transactionData.endDate}
                       onChange={(e) => handleChange("endDate", e.target.value)}
+                      className="bg-slate-800 text-white border-slate-600 [&::-webkit-calendar-picker-indicator]:filter [&::-webkit-calendar-picker-indicator]:invert"
                     />
                   </div>
                 )}
@@ -262,7 +285,12 @@ export function TransactionDialog({
             )}
           </div>
           <DialogFooter>
-            <Button type="submit">Salvar</Button>
+            <Button
+              type="submit"
+              className="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold"
+            >
+              Salvar
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>

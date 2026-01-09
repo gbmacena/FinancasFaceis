@@ -80,46 +80,63 @@ export function RegisterForm() {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <div className="space-y-2">
-        <Label htmlFor="name">Nome</Label>
-        <Input id="name" placeholder="Seu nome" {...register("name")} />
+        <Label htmlFor="name" className="text-slate-300">
+          Nome
+        </Label>
+        <Input
+          id="name"
+          placeholder="Seu nome completo"
+          className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-500 focus:border-emerald-500 focus:ring-emerald-500/20"
+          {...register("name")}
+        />
         {errors.name && (
-          <p className="text-sm text-red-500">{errors.name.message}</p>
+          <p className="text-sm text-red-400 flex items-center gap-1">
+            <span>⚠️</span> {errors.name.message}
+          </p>
         )}
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="email">Email</Label>
+        <Label htmlFor="email" className="text-slate-300">
+          Email
+        </Label>
         <Input
           id="email"
           type="email"
           placeholder="seu@email.com"
+          className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-500 focus:border-emerald-500 focus:ring-emerald-500/20"
           {...register("email")}
         />
         {errors.email && (
-          <p className="text-sm text-red-500">{errors.email.message}</p>
+          <p className="text-sm text-red-400 flex items-center gap-1">
+            <span>⚠️</span> {errors.email.message}
+          </p>
         )}
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="password">Senha</Label>
+        <Label htmlFor="password" className="text-slate-300">
+          Senha
+        </Label>
         <div className="relative">
           <Input
             id="password"
             type={showPassword ? "text" : "password"}
-            placeholder="******"
+            placeholder="••••••••"
+            className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-500 focus:border-emerald-500 focus:ring-emerald-500/20 pr-10"
             {...register("password")}
           />
           <Button
             type="button"
             variant="ghost"
             size="icon"
-            className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+            className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent text-slate-400 hover:text-slate-300"
             onClick={() => setShowPassword(!showPassword)}
           >
             {showPassword ? (
-              <EyeOffIcon className="h-4 w-4 text-muted-foreground" />
+              <EyeOffIcon className="h-4 w-4" />
             ) : (
-              <EyeIcon className="h-4 w-4 text-muted-foreground" />
+              <EyeIcon className="h-4 w-4" />
             )}
             <span className="sr-only">
               {showPassword ? "Esconder senha" : "Mostrar senha"}
@@ -127,30 +144,35 @@ export function RegisterForm() {
           </Button>
         </div>
         {errors.password && (
-          <p className="text-sm text-red-500">{errors.password.message}</p>
+          <p className="text-sm text-red-400 flex items-center gap-1">
+            <span>⚠️</span> {errors.password.message}
+          </p>
         )}
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="confirmPassword">Confirmar Senha</Label>
+        <Label htmlFor="confirmPassword" className="text-slate-300">
+          Confirmar Senha
+        </Label>
         <div className="relative">
           <Input
             id="confirmPassword"
             type={showConfirmPassword ? "text" : "password"}
-            placeholder="******"
+            placeholder="••••••••"
+            className="bg-slate-900/50 border-slate-600 text-white placeholder:text-slate-500 focus:border-emerald-500 focus:ring-emerald-500/20 pr-10"
             {...register("confirmPassword")}
           />
           <Button
             type="button"
             variant="ghost"
             size="icon"
-            className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+            className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent text-slate-400 hover:text-slate-300"
             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
           >
             {showConfirmPassword ? (
-              <EyeOffIcon className="h-4 w-4 text-muted-foreground" />
+              <EyeOffIcon className="h-4 w-4" />
             ) : (
-              <EyeIcon className="h-4 w-4 text-muted-foreground" />
+              <EyeIcon className="h-4 w-4" />
             )}
             <span className="sr-only">
               {showConfirmPassword ? "Esconder senha" : "Mostrar senha"}
@@ -158,14 +180,44 @@ export function RegisterForm() {
           </Button>
         </div>
         {errors.confirmPassword && (
-          <p className="text-sm text-red-500">
-            {errors.confirmPassword.message}
+          <p className="text-sm text-red-400 flex items-center gap-1">
+            <span>⚠️</span> {errors.confirmPassword.message}
           </p>
         )}
       </div>
 
-      <Button type="submit" className="w-full" disabled={isSubmitting}>
-        {isSubmitting ? "Cadastrando..." : "Cadastrar"}
+      <Button
+        type="submit"
+        className="w-full bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white shadow-lg shadow-emerald-500/30 hover:shadow-emerald-500/50 transition-all h-11 font-semibold mt-6"
+        disabled={isSubmitting}
+      >
+        {isSubmitting ? (
+          <span className="flex items-center gap-2">
+            <svg
+              className="animate-spin h-5 w-5"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              ></circle>
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              ></path>
+            </svg>
+            Cadastrando...
+          </span>
+        ) : (
+          "Criar Conta Grátis"
+        )}
       </Button>
     </form>
   );
