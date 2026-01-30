@@ -15,7 +15,7 @@ app.use(
     origin: "*",
     methods: "*",
     allowedHeaders: "*",
-  })
+  }),
 );
 
 app.use(express.json());
@@ -36,6 +36,10 @@ const swaggerOptions = {
       {
         url: "http://localhost:3001/api",
         description: "Servidor local",
+      },
+      {
+        url: "https://financasfaceis-backend.onrender.com/api",
+        description: "Servidor Render",
       },
     ],
     components: {
