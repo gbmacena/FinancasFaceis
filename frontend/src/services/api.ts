@@ -2,7 +2,7 @@ import axios from "axios";
 import { toast } from "sonner";
 import { getItem, removeItem } from "@/utils/storage";
 
-const API_URL = "http://localhost:3001";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"; // Use env var com fallback
 
 const api = axios.create({
   baseURL: API_URL,
@@ -41,7 +41,7 @@ api.interceptors.response.use(
       }
     }
     return Promise.reject(error);
-  }
+  },
 );
 
 export default api;
