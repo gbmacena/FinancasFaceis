@@ -16,6 +16,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "FinançasFáceis",
   description: "App de controle financeiro",
+  icons: {
+    icon: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({
