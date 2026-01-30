@@ -71,9 +71,11 @@ export function useDashboard(categories: Category[]) {
 
   const handleDeleteExpense = async (expenseId: string) => {
     toast(
-      <div>
-        <p>Tem certeza que deseja deletar esta despesa?</p>
-        <div className="flex gap-2 mt-2">
+      <div className="bg-slate-900 border border-slate-700 rounded-lg p-4 text-white">
+        <p className="text-slate-300 mb-3">
+          Tem certeza que deseja deletar esta despesa?
+        </p>
+        <div className="flex gap-2">
           <button
             onClick={async () => {
               try {
@@ -86,13 +88,13 @@ export function useDashboard(categories: Category[]) {
                 toast.dismiss();
               }
             }}
-            className="bg-black text-white px-3 py-1 rounded"
+            className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md font-medium transition-colors"
           >
             Confirmar
           </button>
           <button
             onClick={() => toast.dismiss()}
-            className="bg-white px-3 py-1 rounded"
+            className="bg-slate-700 hover:bg-slate-600 text-slate-300 px-4 py-2 rounded-md font-medium transition-colors border border-slate-600"
           >
             Cancelar
           </button>
@@ -100,7 +102,7 @@ export function useDashboard(categories: Category[]) {
       </div>,
       {
         duration: Infinity,
-      }
+      },
     );
   };
 
@@ -112,7 +114,7 @@ export function useDashboard(categories: Category[]) {
 
     const totalExpenses = dashboardData.expenses.reduce(
       (sum, expense) => sum + expense.value,
-      0
+      0,
     );
 
     const formatCurrency = (value: number) => {
@@ -141,8 +143,8 @@ export function useDashboard(categories: Category[]) {
           <div class="header">
             <h1>💰 FinançasFáceis - Relatório de Despesas</h1>
             <p class="date">Período: ${selectedMonth} | Gerado em: ${new Date().toLocaleDateString(
-      "pt-BR"
-    )}</p>
+              "pt-BR",
+            )}</p>
             ${
               selectedCategory !== null
                 ? `<p>Categoria: ${
@@ -172,7 +174,7 @@ export function useDashboard(categories: Category[]) {
                     expense.value < 0 ? "#ef4444" : "#10b981"
                   }">${formatCurrency(expense.value)}</td>
                   <td>${new Date(expense.date).toLocaleDateString("pt-BR")}</td>
-                </tr>`
+                </tr>`,
                 )
                 .join("")}
               <tr class="total-row">
