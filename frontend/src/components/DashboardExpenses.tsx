@@ -8,7 +8,7 @@ import { Expense } from "@/types";
 interface DashboardExpensesProps {
   expenses: Expense[];
   onEdit: () => void;
-  onRemove: (expenseId: string) => void;
+  onRemove: (expense: Expense) => void;
   onPrint: () => void;
 }
 

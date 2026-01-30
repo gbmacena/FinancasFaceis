@@ -5,6 +5,7 @@ import userService from "@/services/userService";
 import transactionService from "@/services/transitionService";
 import { getItem } from "@/utils/storage";
 import { User, Expense, Category } from "@/types";
+import { DeleteConfirmationDialog } from "@/components/DeleteConfirmationDialog";
 
 export function useDashboard(categories: Category[]) {
   const [selectedMonth, setSelectedMonth] = useState<string>("");
@@ -16,6 +17,9 @@ export function useDashboard(categories: Category[]) {
     expenses: Expense[];
   } | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [expenseToDelete, setExpenseToDelete] = useState<Expense | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -69,41 +73,31 @@ export function useDashboard(categories: Category[]) {
     fetchDashboard();
   }, [fetchDashboard]);
 
-  const handleDeleteExpense = async (expenseId: string) => {
-    toast(
-      <div className="bg-slate-900 rounded-lg p-4 text-white">
-        <p className="text-slate-300 mb-3">
-          Tem certeza que deseja deletar esta despesa?
-        </p>
-        <div className="flex gap-2">
-          <button
-            onClick={async () => {
-              try {
-                await transactionService.deleteExpense(expenseId);
-                toast.success("Despesa deletada com sucesso!");
-                fetchDashboard();
-              } catch {
-                toast.error("Erro ao deletar a despesa. Tente novamente.");
-              } finally {
-                toast.dismiss();
-              }
-            }}
-            className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md font-medium transition-colors"
-          >
-            Confirmar
-          </button>
-          <button
-            onClick={() => toast.dismiss()}
-            className="bg-slate-700 hover:bg-slate-600 text-slate-300 px-4 py-2 rounded-md font-medium transition-colors"
-          >
-            Cancelar
-          </button>
-        </div>
-      </div>,
-      {
-        duration: Infinity,
-      },
-    );
+  const handleDeleteExpense = (expense: Expense) => {
+    setExpenseToDelete(expense);
+    setDeleteDialogOpen(true);
+  };
+
+  const confirmDeleteExpense = async () => {
+    if (!expenseToDelete) return;
+
+    setIsDeleting(true);
+    try {
+      await transactionService.deleteExpense(expenseToDelete.uuid);
+      toast.success("Despesa deletada com sucesso!");
+      fetchDashboard();
+      setDeleteDialogOpen(false);
+      setExpenseToDelete(null);
+    } catch {
+      toast.error("Erro ao deletar a despesa. Tente novamente.");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const cancelDeleteExpense = () => {
+    setDeleteDialogOpen(false);
+    setExpenseToDelete(null);
   };
 
   const handlePrint = () => {
@@ -205,5 +199,14 @@ export function useDashboard(categories: Category[]) {
     handleDeleteExpense,
     handlePrint,
     activeSearchQuery,
+    deleteConfirmationModal: (
+      <DeleteConfirmationDialog
+        open={deleteDialogOpen}
+        onConfirm={confirmDeleteExpense}
+        onCancel={cancelDeleteExpense}
+        expenseTitle={expenseToDelete?.title}
+        isLoading={isDeleting}
+      />
+    ),
   };
 }

@@ -24,6 +24,7 @@ export default function DashboardPage() {
     handleDeleteExpense,
     handlePrint,
     activeSearchQuery,
+    deleteConfirmationModal,
   } = useDashboard(categories);
 
   if (!dashboardData) {
@@ -75,6 +76,7 @@ export default function DashboardPage() {
           onPrint={handlePrint}
         />
       </div>
+      {deleteConfirmationModal}
     </div>
   );
 }

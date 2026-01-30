@@ -53,5 +53,5 @@ export interface EditExpenseDialogProps {
 export interface DashboardTableProps {
   expenses: Expense[];
   onEdit: (expense: Expense) => void;
-  onRemove: (uuid: string) => void;
+  onRemove: (expense: Expense) => void;
 }
