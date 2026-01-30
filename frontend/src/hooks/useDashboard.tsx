@@ -71,7 +71,7 @@ export function useDashboard(categories: Category[]) {
 
   const handleDeleteExpense = async (expenseId: string) => {
     toast(
-      <div className="bg-slate-900 border border-slate-700 rounded-lg p-4 text-white">
+      <div className="bg-slate-900 rounded-lg p-4 text-white">
         <p className="text-slate-300 mb-3">
           Tem certeza que deseja deletar esta despesa?
         </p>
@@ -94,7 +94,7 @@ export function useDashboard(categories: Category[]) {
           </button>
           <button
             onClick={() => toast.dismiss()}
-            className="bg-slate-700 hover:bg-slate-600 text-slate-300 px-4 py-2 rounded-md font-medium transition-colors border border-slate-600"
+            className="bg-slate-700 hover:bg-slate-600 text-slate-300 px-4 py-2 rounded-md font-medium transition-colors"
           >
             Cancelar
           </button>
