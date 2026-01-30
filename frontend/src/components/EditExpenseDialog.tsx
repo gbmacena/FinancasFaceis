@@ -26,7 +26,7 @@ export function EditExpenseDialog({
   const [value, setValue] = useState(expense.value);
   const [date, setDate] = useState(expense.date.slice(0, 10));
   const [categoryId, setCategoryId] = useState<number | undefined>(
-    expense.categoryId
+    expense.categoryId,
   );
   const categories = useCategories();
 
@@ -51,27 +51,32 @@ export function EditExpenseDialog({
 
   return (
     <Dialog open={true} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] bg-slate-900 border-slate-700">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>Editar Despesa</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-white">Editar Despesa</DialogTitle>
+            <DialogDescription className="text-slate-400">
               Atualize os detalhes da despesa abaixo.
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
-              <Label htmlFor="titulo">Título</Label>
+              <Label htmlFor="titulo" className="text-white">
+                Título
+              </Label>
               <Input
                 id="titulo"
                 placeholder="Ex: Aluguel, Mercado"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 required
+                className="bg-slate-800 text-white border-slate-600"
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="valor">Valor (R$)</Label>
+              <Label htmlFor="valor" className="text-white">
+                Valor (R$)
+              </Label>
               <Input
                 id="valor"
                 type="number"
@@ -80,25 +85,31 @@ export function EditExpenseDialog({
                 value={value}
                 onChange={(e) => setValue(Number(e.target.value))}
                 required
+                className="bg-slate-800 text-white border-slate-600"
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="data">Data</Label>
+              <Label htmlFor="data" className="text-white">
+                Data
+              </Label>
               <Input
                 id="data"
                 type="date"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
                 required
+                className="bg-slate-800 text-white border-slate-600 [&::-webkit-calendar-picker-indicator]:filter [&::-webkit-calendar-picker-indicator]:invert"
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="categoria">Categoria</Label>
+              <Label htmlFor="categoria" className="text-white">
+                Categoria
+              </Label>
               <select
                 id="categoria"
                 value={categoryId || ""}
                 onChange={(e) => setCategoryId(Number(e.target.value))}
-                className="border rounded-md p-2"
+                className="border border-slate-600 rounded-md p-2 bg-slate-800 text-white"
                 required
               >
                 <option value="" disabled>
@@ -113,7 +124,13 @@ export function EditExpenseDialog({
             </div>
           </div>
           <DialogFooter>
-            <Button type="submit">Salvar</Button>
+            <Button
+              type="submit"
+              disabled
+              className="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold opacity-60 cursor-not-allowed"
+            >
+              Salvar
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>

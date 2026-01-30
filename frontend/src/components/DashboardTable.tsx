@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { Edit, Trash } from "lucide-react";
 import { EditExpenseDialog } from "./EditExpenseDialog";
+import { DeleteExpenseDialog } from "./DeleteExpenseDialog";
 import { Expense, DashboardTableProps } from "@/types";
 
 export const DashboardTable: React.FC<DashboardTableProps> = ({
@@ -11,6 +12,7 @@ export const DashboardTable: React.FC<DashboardTableProps> = ({
   onRemove,
 }) => {
   const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
+  const [deletingExpense, setDeletingExpense] = useState<Expense | null>(null);
 
   return (
     <>
@@ -92,7 +94,7 @@ export const DashboardTable: React.FC<DashboardTableProps> = ({
                       <Edit className="w-4 h-4" />
                     </button>
                     <button
-                      onClick={() => onRemove(expense.uuid)}
+                      onClick={() => setDeletingExpense(expense)}
                       className="p-2 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30 transition-all border border-red-500/30 hover:scale-110"
                       title="Remover"
                     >
@@ -127,6 +129,18 @@ export const DashboardTable: React.FC<DashboardTableProps> = ({
             onEdit(editingExpense);
           }}
           onClose={() => setEditingExpense(null)}
+        />
+      )}
+
+      {deletingExpense && (
+        <DeleteExpenseDialog
+          open={!!deletingExpense}
+          expenseTitle={deletingExpense.title}
+          onCancel={() => setDeletingExpense(null)}
+          onConfirm={() => {
+            onRemove(deletingExpense.uuid);
+            setDeletingExpense(null);
+          }}
         />
       )}
     </>
