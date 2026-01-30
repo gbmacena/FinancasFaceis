@@ -84,9 +84,10 @@ export const DashboardTable: React.FC<DashboardTableProps> = ({
                 <td className="p-4">
                   <div className="flex gap-2 justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                     <button
+                      disabled
                       onClick={() => setEditingExpense(expense)}
-                      className="p-2 bg-blue-500/20 text-blue-400 rounded-lg hover:bg-blue-500/30 transition-all border border-blue-500/30 hover:scale-110"
-                      title="Editar"
+                      className="p-2 bg-gray-500/20 text-gray-400 rounded-lg border border-gray-500/30 cursor-not-allowed"
+                      title="Editar (desabilitado)"
                     >
                       <Edit className="w-4 h-4" />
                     </button>
