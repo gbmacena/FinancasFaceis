@@ -40,7 +40,8 @@
 ---
 
 ## 🚀 Acesse o projeto
-🔗 [Projeto online (Vercel)](https://financas-faceis.vercel.app)  
+🔗 [Projeto online (Vercel)](https://financas-faceis.vercel.app)
+🔗 [Backend (Render)](https://financasfaceis-backend.onrender.com)  
 📄 [Documentação da API (Swagger)](https://financasfaceis-backend.onrender.com/api-docs)  
 
 ---
